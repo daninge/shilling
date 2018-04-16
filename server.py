@@ -15,10 +15,10 @@ import time
 contract_source_code = '''
 pragma solidity ^0.4.0;
 
-contract Greeter {
-    string public greeting;
+contract StorageContract {
+    int
 
-    function Greeter() {
+    function StorageContract() {
         greeting = 'Hello';
     }
 
