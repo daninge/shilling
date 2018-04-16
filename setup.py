@@ -2,7 +2,7 @@ import os
 from solc import compile_source
 from web3.contract import ConciseContract
 
-path = "/home/dinge/shilling-truffle/contracts/"
+path = "contracts/"
 
 contracts = {}
 contract_interfaces = {}

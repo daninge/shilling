@@ -26,13 +26,15 @@ contract StorageProof {
         return challenge;
     }
 
+    function getProof() view public returns (bytes) {
+        return proof;
+    }
+
     function getFileId() view public returns (uint) {
         return fileId;
     }
 
     function submitProof(bytes proofIn) public {
-        if(msg.sender == storer){
-            proof = proofIn;
-        }
+        proof = proofIn;
     }
 }
