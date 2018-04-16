@@ -10,7 +10,7 @@ print(w3.eth.accounts)
 #print statement
 from solc import compile_source
 from web3.contract import ConciseContract
-
+import time 
 # Solidity source code
 contract_source_code = '''
 pragma solidity ^0.4.0;
@@ -35,6 +35,9 @@ contract Greeter {
 compiled_sol = compile_source(contract_source_code) # Compiled source code
 contract_interface = compiled_sol['<stdin>:Greeter']
 
+print("****")
+print(contract_interface['abi'])
+print("//////")
 # Instantiate and deploy contract
 contract = w3.eth.contract(abi=contract_interface['abi'], bytecode=contract_interface['bin'])
 
@@ -42,9 +45,13 @@ contract = w3.eth.contract(abi=contract_interface['abi'], bytecode=contract_inte
 tx_hash = contract.deploy(transaction={'from': w3.eth.accounts[0], 'gas': 410000})
 
 # Get tx receipt to get contract address
-tx_receipt = w3.eth.getTransactionReceipt(tx_hash)
-contract_address = tx_receipt['contractAddress']
+tx_receipt = None
+while tx_receipt == None:
+    tx_receipt = w3.eth.getTransactionReceipt(tx_hash)
+    time.sleep(1)
 
+contract_address = tx_receipt['contractAddress']
+print("contract address = "+str(contract_address))
 # Contract instance in concise mode
 contract_instance = w3.eth.contract(abi=contract_interface['abi'], address=contract_address, ContractFactoryClass=ConciseContract)
 
