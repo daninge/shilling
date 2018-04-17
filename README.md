@@ -31,7 +31,9 @@ Our system will consider the following four adversarial nodes:
 * __Proof Miners:__ These nodes will perform proof-of-works for more computationally limited devices for a fee.
 
 
-![POWDiagram1](docs/shillingdiagram1.png)
+![](docs/diagram1.png)
+
+![](docs/diagram2.png)
 
 
 ## Acknowledgements
