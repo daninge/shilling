@@ -5,6 +5,10 @@ A decentralised file storage system for computationally limited devices. This wa
 ## Usage
 
 
+## Overview
+
+![POWDiagram1](docs/shillingdiagram1.png)
+
 ## External Dependencies
 
 
