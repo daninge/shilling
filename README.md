@@ -6,15 +6,20 @@ A decentralised file storage system for computationally limited devices. This wa
 
 
 ## Installation
-We will use a python virtual environment for convenience. Also, packages require Python 3 in order to be run. If you haven't installed virtualenv yet, 
+We will use a Python virtual environment for convenience. Also, packages require Python 3 in order to be run. If you haven't installed virtualenv yet, 
 ```
 pip3 install virtualenv 
 virtualenv venv
 source venv/bin/activate
 ```
-You can confirm using ```which python``` whether or not you are using a system Python installation or the one from the virtual environment. Then, install the dependencies in ```packages.txt``` for a stable version of Shilling.
+You can confirm using ```which python``` whether or not you are using a system Python installation or the one from the virtual environment. 
+
+The dependencies include ```web3``` and ```solc```. To install these, run
 ```
-pip3 install -r packages.txt
+brew tap ethereum/ethereum
+brew install solidity
+pip3 install web3
+pip3 install py-solc
 ```
 
 ## Overview
@@ -28,8 +33,6 @@ Our system will consider the following four adversarial nodes:
 
 
 ![POWDiagram1](docs/shillingdiagram1.png)
-
-## External Dependencies
 
 
 ## Acknowledgements
