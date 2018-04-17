@@ -5,6 +5,18 @@ A decentralised file storage system for computationally limited devices. This wa
 ## Usage
 
 
+## Installation
+We will use a python virtual environment for convenience. Also, packages require Python 3 in order to be run. If you haven't installed virtualenv yet, 
+```
+pip3 install virtualenv 
+virtualenv venv
+source venv/bin/activate
+```
+You can confirm using ```which python``` whether or not you are using a system Python installation or the one from the virtual environment. Then, install the dependencies in ```packages.txt``` for a stable version of Shilling.
+```
+pip3 install -r packages.txt
+```
+
 ## Overview
 
 Our system will consider the following four adversarial nodes:
