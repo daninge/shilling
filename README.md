@@ -5,6 +5,22 @@ A decentralised file storage system for computationally limited devices. This wa
 ## Usage
 
 
+## Installation
+We will use a Python virtual environment for convenience. Also, packages require Python 3 in order to be run. If you haven't installed virtualenv yet, 
+```
+pip3 install virtualenv 
+virtualenv venv
+source venv/bin/activate
+```
+You can confirm using ```which python``` whether or not you are using a system Python installation or the one from the virtual environment. 
+
+To install the dependencies, run
+```
+brew tap ethereum/ethereum
+brew install solidity
+pip3 install -r packages.txt
+```
+
 ## Overview
 
 Our system will consider the following four adversarial nodes:
@@ -16,8 +32,6 @@ Our system will consider the following four adversarial nodes:
 
 
 ![POWDiagram1](docs/shillingdiagram1.png)
-
-## External Dependencies
 
 
 ## Acknowledgements
