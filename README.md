@@ -30,10 +30,7 @@ Our system will consider the following four adversarial nodes:
 * __Retrieval Miners:__ These nodes act as file servers for the network for a fee.
 * __Proof Miners:__ These nodes will perform proof-of-works for more computationally limited devices for a fee.
 
-
-![](docs/diagram1.png)
-
-![](docs/diagram2.png)
+<img src="docs/diagram1.png" width="400"> <img src="docs/diagram2.png" width="450">
 
 
 ## Acknowledgements
