@@ -14,12 +14,11 @@ source venv/bin/activate
 ```
 You can confirm using ```which python``` whether or not you are using a system Python installation or the one from the virtual environment. 
 
-The dependencies include ```web3``` and ```solc```. To install these, run
+To install the dependencies, run
 ```
 brew tap ethereum/ethereum
 brew install solidity
-pip3 install web3
-pip3 install py-solc
+pip3 install -r packages.txt
 ```
 
 ## Overview
