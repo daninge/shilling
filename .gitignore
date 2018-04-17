@@ -1,0 +1,12 @@
+.*DS_Store
+*/*DS_Store
+
+# Always want CMakefiles or makefiles
+!Makefile
+!makefile
+!CMakeLists.txt
+
+
+# Want to ignore log files
+*.txt
+*/*.txt
