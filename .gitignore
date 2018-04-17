@@ -10,3 +10,4 @@
 # Want to ignore log files
 *.txt
 */*.txt
+__pycache__/

@@ -7,7 +7,14 @@ path = "contracts/"
 contracts = {}
 contract_interfaces = {}
 
-storage_proof_address = None
+genesis_address = None
+
+try:
+    f = open("genesis_address.txt", "r")
+    genesis_address = f.read()
+    print(genesis_address)
+except:
+    print("Failed to find genesis address file")
 
 #import the source code
 for file_name in os.listdir(path):
@@ -24,7 +31,7 @@ for contract, src in contracts.items():
     #print(src)
     #break
 
-def deploy_contract(w3, contract_name, sender, args=[1,1]):
+def deploy_contract(w3, contract_name, sender, args=None):
     print(contract_name + " being deployed to network")
     # Instantiate and deploy contract
     contract = w3.eth.contract(abi=contract_interfaces[contract_name]['abi'], bytecode=contract_interfaces[contract_name]['bin'])
