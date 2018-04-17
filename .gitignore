@@ -8,6 +8,5 @@
 
 
 # Want to ignore log files
-*.txt
-*/*.txt
 __pycache__/
+genesis_address.txt
