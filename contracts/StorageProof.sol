@@ -8,7 +8,7 @@ contract StorageProof {
 
     bytes proof;
 
-    function Migrations(address storerIn, uint fileIdIn) public {
+    function StorageProof(address storerIn, uint fileIdIn) public {
         requestor = msg.sender;
         storer = storerIn;
         fileId = fileIdIn;

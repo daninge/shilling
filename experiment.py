@@ -11,8 +11,8 @@ import time
 # while 
 # print(my_contract.getProof())
 
-while s.storage_proof_address == None:
-    continue
+# while s.storage_proof_address == None:
+#     continue
 
 time.sleep(10)
 
