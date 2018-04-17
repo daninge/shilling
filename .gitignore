@@ -6,6 +6,16 @@
 !makefile
 !CMakeLists.txt
 
+# Ignore virtualenv
+bin/*
+bin*
+.Python*
+include*
+lib*
+pip-selfcheck*
+activate*
+venv*
+venv/*
 
 # Want to ignore log files
 __pycache__/
