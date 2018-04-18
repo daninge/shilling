@@ -17,10 +17,15 @@ def prove (address):
 
     #if proofs should be outsourced
     if IS_OUTSOURCING_PROOFS:
+        print("is outsourcing proofs")
         #do shit here
     
     #generate proof here
+    print("generating a local proof")
 
+
+#####################################################################
+#Logic starts here
 
 #Get the genesis contract
 genesis_contract = s.get_contract_instance(w3, s.genesis_address, "GenesisContract")
@@ -40,12 +45,15 @@ current_contract = s.get_contract_instance(w3, contract_address, "RequestStorage
 #records the number of proofs we have submitted so far
 num_proofs_so_far = 0
 
+print("waiting for proof requests")
 #respond to requests for proofs of storage
 while True:
     time.sleep(1)
     proof_request_list = current_contract.getProofs()
     if len(proof_request_list) > num_proofs_so_far:
         num_proofs_so_far += 1
+        print("proof requested at address"+str(num_proofs_so_far))
         prove(proof_request_list[num_proofs_so_far])
+        print("proof successful, waiting for more proof requests")
 
 
