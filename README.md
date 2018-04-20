@@ -20,6 +20,7 @@ brew tap ethereum/ethereum
 brew install solidity
 pip3 install -r packages.txt
 ```
+Other than Python libraries, we also require Truffle Ganache, which can be downloaded [here](http://truffleframework.com/ganache/).
 
 ## Overview
 
