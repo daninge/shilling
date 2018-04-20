@@ -62,13 +62,13 @@ def isGoodNumber(a, p, q ):
 file = [1234, 5678, 9101, 1213]
 
 def key_gen():
-    (pubkey, privkey) = rsa.newkeys(2048)
+    (pubkey, privkey) = rsa.newkeys(512)
     pk = (privkey.n, g(privkey.p, privkey.q))
-    sk = (privkey.e, privkey.d, random.getrandbits(2048))
+    sk = (privkey.e, privkey.d, random.getrandbits(512))
     return (pk, sk)
 
 def tag_block(pk, sk, m, i):
-    wi = str(sk[2] + (i << 2048)).encode('utf-8')
+    wi = str(sk[2] + (i << 512)).encode('utf-8')
     #print(wi)
     #print("///////////")
     h = hashlib.sha256()
@@ -85,14 +85,16 @@ def get_challenge_blocks(k, c, f):
         while something in challenge_blocks:
             something = random.randrange(f)
         challenge_blocks.append(something)  
-    return challenge_blocks
+    #return challenge_blocks
+    return [0, 2]
 
 def generate_coefficients(k ,c):
     random.seed(k)
     coefficients = []
     for i in range(0, c):
         coefficients.append(random.randint(0, 2000))
-    return coefficients
+    #return coefficients
+    return [5, 10]
 
 def get_message(i):
     return file[i]
@@ -129,7 +131,7 @@ def check_proof(pk, sk, chal, V):
     c, k1, k2, gs = chal
     print("before")
     # curvy_t = T * e
-    curvy_t = Decimal(pow(V[0], sk[0], pk[0]))
+    curvy_t = Decimal(pow(V[0], sk[0]))
     print("after")
     #generate challenge blocks
     challenge_blocks = get_challenge_blocks(k1, c, len(file))
@@ -138,7 +140,7 @@ def check_proof(pk, sk, chal, V):
     coefficients = generate_coefficients(k2, c)
     print("initial +"+str(curvy_t))
     for i in range(0, c):
-        wi = str(sk[2] + (challenge_blocks[i] << 2048)).encode('utf-8')
+        wi = str(sk[2] + (challenge_blocks[i] << 512)).encode('utf-8')
         #print(wi)
         #print("///////////")
         h = hashlib.sha256()
