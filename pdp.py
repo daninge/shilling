@@ -57,18 +57,53 @@ def isGoodNumber(a, p, q ):
 
 ####################
 #Usable functions below here
-def key_gen(key_size):
-    # p = gensafeprime.generate(prime_len)
-    # pdash = (p - 1)/2
-    # q = gensafeprime.generate(prime_len)
-    # qdash = (q - 1)/2
-    # N = p * q
-    
-    # #find e and d
-    # v = random.getrandbits(key_size)
-    
-
-
+def key_gen():
+    (pubkey, privkey) = rsa.newkeys(2048)
+    pk = (privkey.n, g(privkey.p, privkey.q))
+    sk = (privkey.e, privkey.d, random.getrandbits(2048))
+    return (pk, sk)
 
 def tag_block(pk, sk, m, i):
-    print("erdsafji\n")
+    wi = sk[2] + (i << 2048)
+    t = (hashlib.sha256(wi) * (g ** m)) ** sk[1]
+    return (t, wi)
+
+#f is number of avaliable blocks
+def gen_proof(pk, f, chal, T):
+    c, k1, k2, gs = chal
+    
+    #generate challenge blocks
+    random.seed(k1)
+    challenge_blocks = []
+    for i in range(0, c):
+        something = random.randrange(f)
+        while something not in challenge_blocks:
+            something = random.randrange(f)
+        challenge_blocks.append(something)
+    
+    #generate coefficients
+    random.seed(k2)
+    coefficients = []
+    for i in range(0, c):
+        coefficients.append(random.randint(0, 2000))
+
+    #Multiply challeneges
+    big_t = 1
+    for challenge in challenge_blocks:
+        big_t *= T[challenge][0]
+
+    temp = 0
+    for i in range(0, c):
+        temp += coefficients[i] * get_message(challenge_blocks[i])
+    
+    rho = hashlib.sha256((gs ** temp) % pk[0])
+
+    return (big_t, rho)
+
+
+
+        
+
+
+
+    
