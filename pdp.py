@@ -61,6 +61,11 @@ def isGoodNumber(a, p, q ):
 
 file = [1234, 5678, 9101, 1213]
 
+def sha(num):
+    h = hashlib.sha256()
+    h.update(str(num).encode('utf-8'))
+    return int(h.hexdigest(), 16)
+
 def key_gen():
     (pubkey, privkey) = rsa.newkeys(512)
     #pk = (N, g)
@@ -70,13 +75,8 @@ def key_gen():
     return (pk, sk)
 
 def tag_block(pk, sk, m, i):
-    wi = str(sk[2] + (i << 512)).encode('utf-8')
-    #print(wi)
-    #print("///////////")
-    h = hashlib.sha256()
-    h.update(wi)
-    hash_output = int(h.hexdigest(), 16) % pk[0]
-    t = pow( (hash_output * (pk[1] ** m)), sk[1], pk[0])
+    wi = sk[2] + (i << 512)
+    t = pow( (sha(wi) * (pk[1] ** m)), sk[1], pk[0])
     return (t, wi)
 
 def get_challenge_blocks(k, c, f):
@@ -99,10 +99,11 @@ def generate_coefficients(k ,c):
     return [5, 10]
 
 def get_message(i):
+    print("returning block "+str(i))
     return file[i]
 
 #f is number of avaliable blocks
-def gen_proof(pk, f, chal, T):
+def gen_proof(pk, f, chal, tags):
     c, k1, k2, gs = chal
     
     #generate challenge blocks
@@ -112,32 +113,49 @@ def gen_proof(pk, f, chal, T):
     #generate coefficients
     coefficients = generate_coefficients(k2, c)
 
-    print("wfu")
-    #Multiply challeneges
-    big_t = 1
-
-    temp = 0
+    T = 1
     for i in range(0, c):
-        temp += coefficients[i] * get_message(challenge_blocks[i])
+        #for every challenge
+        block_num = challenge_blocks[i]
+        coeff = coefficients[i]
+        ti, wi = tags[block_num]
+        T = T * (ti ** coeff)
 
+    exponent = 0
     for i in range(0, c):
-        wi = str(sk[2] + (challenge_blocks[i] << 512)).encode('utf-8')
-        #print(wi)
-        #print("///////////")
-        h = hashlib.sha256()
-        h.update(wi)
-        hash_output = int(h.hexdigest(), 16) % pk[0]
-        big_t *= (hash_output ** coefficients[i])
-    big_t *= temp
-    big_t = pow(big_t, sk[1], pk[0])
-        #big_t *= T[challenge_blocks[i]][0] ** coefficients[i]
+        block_num = challenge_blocks[i]
+        coeff = coefficients[i]
+        m = get_message(block_num)
+        exponent = exponent + (coeff * m)
     
-    print("john")
-    h = hashlib.sha256()
-    h.update(str(pow(gs, temp, pk[0])).encode('utf-8'))
-    rho = int(h.hexdigest(), 16) % pk[0]
+    rho = sha(pow(gs, exponent, pk[0]))
+
+    # print("wfu")
+    # #Multiply challeneges
+    # big_t = 1
+
+    # temp = 0
+    # for i in range(0, c):
+    #     temp += coefficients[i] * get_message(challenge_blocks[i])
+
+    # for i in range(0, c):
+    #     wi = str(sk[2] + (challenge_blocks[i] << 512)).encode('utf-8')
+    #     #print(wi)
+    #     #print("///////////")
+    #     h = hashlib.sha256()
+    #     h.update(wi)
+    #     hash_output = int(h.hexdigest(), 16) % pk[0]
+    #     big_t *= (hash_output ** coefficients[i])
+    # big_t *= temp
+    # big_t = pow(big_t, sk[1], pk[0])
+    #     #big_t *= T[challenge_blocks[i]][0] ** coefficients[i]
+    
+    # print("john")
+    # h = hashlib.sha256()
+    # h.update(str(pow(gs, temp, pk[0])).encode('utf-8'))
+    # rho = int(h.hexdigest(), 16) % pk[0]
     print("rho")
-    return (big_t, rho)
+    return (T, rho)
 
 def egcd(a, b):
     if a == 0:
@@ -213,5 +231,5 @@ proof = gen_proof(pk, len(file), chal, tags)
 print("proof")
 print(proof)
 chal = (2, 2, 4, 4)
-
+proof = (proof[0], proof[1])
 print(check_proof(pk, sk, chal, proof))
