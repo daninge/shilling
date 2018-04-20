@@ -68,24 +68,31 @@ def tag_block(pk, sk, m, i):
     t = (hashlib.sha256(wi) * (g ** m)) ** sk[1]
     return (t, wi)
 
-#f is number of avaliable blocks
-def gen_proof(pk, f, chal, T):
-    c, k1, k2, gs = chal
-    
-    #generate challenge blocks
-    random.seed(k1)
+def get_challenge_blocks(k, c):
+    random.seed(k)
     challenge_blocks = []
     for i in range(0, c):
         something = random.randrange(f)
         while something not in challenge_blocks:
             something = random.randrange(f)
-        challenge_blocks.append(something)
-    
-    #generate coefficients
-    random.seed(k2)
+        challenge_blocks.append(something)  
+    return challenge_blocks
+
+def generate_coefficients(k ,c):
+    random.seed(k)
     coefficients = []
     for i in range(0, c):
         coefficients.append(random.randint(0, 2000))
+    return coefficients
+#f is number of avaliable blocks
+def gen_proof(pk, f, chal, T):
+    c, k1, k2, gs = chal
+    
+    #generate challenge blocks
+    challenge_blocks = get_challenge_blocks(k1, c)
+    
+    #generate coefficients
+    coefficients = generate_coefficients(k2, c)
 
     #Multiply challeneges
     big_t = 1
@@ -100,10 +107,25 @@ def gen_proof(pk, f, chal, T):
 
     return (big_t, rho)
 
+def check_proof(pk, sk, chal, V):
+    c, k1, k2, gs = chal
 
+    # curvy_t = T * e
+    curvy_t = V[0] ** sk[0]
 
-        
-
-
-
+    #generate challenge blocks
+    challenge_blocks = get_challenge_blocks(k1, c)
     
+    #generate coefficients
+    coefficients = generate_coefficients(k2, c)
+
+    for i = range(0, c):
+        wi = sk[2] + (challenge_blocks[i] << 2048)
+        curvy_t = curvy_t / (hashlib.sha256(wi) ** coefficients[i])
+
+    if (curvy_t ** chal[3]) % pk[0] == V[1]:
+        return True
+    else:
+        return False
+
+
