@@ -87,16 +87,16 @@ def get_challenge_blocks(k, c, f):
         while something in challenge_blocks:
             something = random.randrange(f)
         challenge_blocks.append(something)  
-    #return challenge_blocks
-    return [0, 2]
+    return challenge_blocks
+    #return [0, 2]
 
 def generate_coefficients(k ,c):
     random.seed(k)
     coefficients = []
     for i in range(0, c):
         coefficients.append(random.randint(0, 2000))
-    #return coefficients
-    return [5, 10]
+    return coefficients
+    #return [5, 10]
 
 def get_message(i):
     print("returning block "+str(i))
