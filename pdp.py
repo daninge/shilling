@@ -5,40 +5,8 @@ import random
 import hashlib
 from fractions import gcd
 from decimal import *
-# pprime = None
-# p = 2 * pprime + 1
-# qprime = None
-# q = 2* qprime + 1
-# N = p * q
-
-
-
-# def g() :
-
-# (pubkey, privkey) = rsa.newkeys(2048)
-# # print(pubkey)
-# #print(privkey)
-
-# print(privkey.n)
-# print("//////////")
-# print(privkey.p*privkey.q)
-
-# p = privkey.p 
-# q = privkey.q 
-# N = privkey.n
 
 prime_len = 512
-
-
-# def g(n) : 
-#     i = 1
-#     while i < n:
-#         r = i ** 2
-#         if gcd(r + 1, n)==1 and gcd(r - 1, n)==1:
-#             return r
-#         else:
-#             i += 1
-#     return None
 
 def g(p, q):
     a = random.randint(1, p * q)
@@ -59,7 +27,7 @@ def isGoodNumber(a, p, q ):
 ####################
 #Usable functions below here
 
-file = [1234, 5678, 9101, 1213]
+file = [1234, 5678, 9101, 1213,1234, 4321, 5678]
 
 def sha(num):
     h = hashlib.sha256()
@@ -129,31 +97,6 @@ def gen_proof(pk, f, chal, tags):
         exponent = exponent + (coeff * m)
     
     rho = sha(pow(gs, exponent, pk[0]))
-
-    # print("wfu")
-    # #Multiply challeneges
-    # big_t = 1
-
-    # temp = 0
-    # for i in range(0, c):
-    #     temp += coefficients[i] * get_message(challenge_blocks[i])
-
-    # for i in range(0, c):
-    #     wi = str(sk[2] + (challenge_blocks[i] << 512)).encode('utf-8')
-    #     #print(wi)
-    #     #print("///////////")
-    #     h = hashlib.sha256()
-    #     h.update(wi)
-    #     hash_output = int(h.hexdigest(), 16) % pk[0]
-    #     big_t *= (hash_output ** coefficients[i])
-    # big_t *= temp
-    # big_t = pow(big_t, sk[1], pk[0])
-    #     #big_t *= T[challenge_blocks[i]][0] ** coefficients[i]
-    
-    # print("john")
-    # h = hashlib.sha256()
-    # h.update(str(pow(gs, temp, pk[0])).encode('utf-8'))
-    # rho = int(h.hexdigest(), 16) % pk[0]
     print("rho")
     return (T, rho)
 
@@ -212,24 +155,24 @@ def check_proof(pk, sk, chal, V):
         return False
 
 
-# tags = []
-# pk, sk = key_gen()
+tags = []
+pk, sk = key_gen()
 
-# #print(sk)
-# #on the client
-# for i in range(0, len(file)):
-#     print("tagging block "+str(i))
-#     tag = tag_block(pk, sk, get_message(i), i)
-#     print(tag)
-#     tags.append(tag)
+#print(sk)
+#on the client
+for i in range(0, len(file)):
+    print("tagging block "+str(i))
+    tag = tag_block(pk, sk, get_message(i), i)
+    print(tag)
+    tags.append(tag)
 
-# chal = (2, 2, 4, pk[1] ** 4)
-# #print(tags)
-# print("here")
-# #print("e "+)
-# proof = gen_proof(pk, len(file), chal, tags)
-# print("proof")
-# print(proof)
-# chal = (2, 2, 4, 4)
-# proof = (proof[0], proof[1])
-# print(check_proof(pk, sk, chal, proof))
+chal = (2, 2, 4, pk[1] ** 4)
+#print(tags)
+print("here")
+#print("e "+)
+proof = gen_proof(pk, len(file), chal, tags)
+print("proof")
+print(proof)
+chal = (2, 2, 4, 4)
+proof = (proof[0]+1, proof[1])
+print(check_proof(pk, sk, chal, proof))
