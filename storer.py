@@ -54,7 +54,7 @@ print("Accepting storage contract at address "+str(contract_address))
 
 #Get an instance of the contract at the accepted address
 current_contract = s.get_contract_instance(w3, contract_address, "RequestStorageContract")
-current_contract.setStorer(storer_id)
+current_contract.setStorer(storer_id, transact={'from': storer_id})
 
 #records the number of proofs we have submitted so far
 num_proofs_so_far = 0
