@@ -7,9 +7,8 @@ contract RequestStorageContract {
 
     address[] proofs;
 
-    function RequestStorageContract(address requestorIn, address storerIn, uint fileIdIn) public {
+    function RequestStorageContract(address requestorIn, uint fileIdIn) public {
         requestor = requestorIn;
-        storer = storerIn;
         fileId = fileIdIn;
     }
 
@@ -17,6 +16,18 @@ contract RequestStorageContract {
         proofs.push(storageProof);
     }
 
+    function getRequestor() public view returns (address) {
+        return requestor;
+    }
+
+    function getStorer() public view returns (address) {
+        return storer;
+    }
+
+    function setStorer(address storerIn) public {
+        storer = storerIn;
+    }
+    
     function getProofs() public view returns (address[]) {
         return proofs;
     }

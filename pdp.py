@@ -155,24 +155,24 @@ def check_proof(pk, sk, chal, V):
         return False
 
 
-tags = []
-pk, sk = key_gen()
+# tags = []
+# pk, sk = key_gen()
 
-#print(sk)
-#on the client
-for i in range(0, len(file)):
-    print("tagging block "+str(i))
-    tag = tag_block(pk, sk, get_message(i), i)
-    print(tag)
-    tags.append(tag)
+# #print(sk)
+# #on the client
+# for i in range(0, len(file)):
+#     print("tagging block "+str(i))
+#     tag = tag_block(pk, sk, get_message(i), i)
+#     print(tag)
+#     tags.append(tag)
 
-chal = (2, 2, 4, pk[1] ** 4)
-#print(tags)
-print("here")
-#print("e "+)
-proof = gen_proof(pk, len(file), chal, tags)
-print("proof")
-print(proof)
-chal = (2, 2, 4, 4)
-proof = (proof[0]+1, proof[1])
-print(check_proof(pk, sk, chal, proof))
+# chal = (2, 2, 4, pk[1] ** 4)
+# #print(tags)
+# print("here")
+# #print("e "+)
+# proof = gen_proof(pk, len(file), chal, tags)
+# print("proof")
+# print(proof)
+# chal = (2, 2, 4, 4)
+# proof = (proof[0]+1, proof[1])
+# print(check_proof(pk, sk, chal, proof))

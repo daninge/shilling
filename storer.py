@@ -1,9 +1,12 @@
 from web3 import Web3, HTTPProvider
 import time
 import setup as s
+import pdp
+
 w3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
 
 IS_OUTSOURCING_PROOFS = False
+
 
 def get_data(file_name, challenge_block):
     f = open("files/"+str(file_name)+".txt", r)
@@ -27,11 +30,14 @@ def prove (address):
 #####################################################################
 #Logic starts here
 
+storer_id = w3.eth.accounts[4]
+
 #Get the genesis contract
 genesis_contract = s.get_contract_instance(w3, s.genesis_address, "GenesisContract")
 
 print("Waiting for a contract:")
 
+print(genesis_contract.getAvailableContracts())
 contract_address = genesis_contract.getContract()
 while contract_address == 0:
     time.sleep(1)
@@ -41,6 +47,7 @@ print("Accepting storage contract at address "+str(contract_address))
 
 #Get an instance of the contract at the accepted address
 current_contract = s.get_contract_instance(w3, contract_address, "RequestStorageContract")
+current_contract.setStorer(storer_id)
 
 #records the number of proofs we have submitted so far
 num_proofs_so_far = 0
