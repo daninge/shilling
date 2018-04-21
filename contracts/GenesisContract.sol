@@ -20,6 +20,8 @@ contract GenesisContract {
         //         return to_return;
         //     }
         // }
-        return available_contract;
+        address to_return = available_contract;
+        available_contract = address(0);
+        return to_return;
     }
 }

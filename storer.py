@@ -39,18 +39,17 @@ print("Waiting for a contract:")
 
 #print(genesis_contract.getAvailableContracts())
 
-print(s.genesis_address)
+# print(s.genesis_address)
 
-print(genesis_contract.getContract())
-genesis_contract.submitContract(storer_id,transact={'from': storer_id})
-print(genesis_contract.getContract())
+# print(genesis_contract.getContract())
+#genesis_contract.submitContract(storer_id,transact={'from': storer_id})
+#print(genesis_contract.getContract())
 contract_address = genesis_contract.getContract()
 while contract_address == None:
     print(genesis_contract.getContract())
     time.sleep(1)
     contract_address = genesis_contract.getContract()
 
-assert(False)
 print("Accepting storage contract at address "+str(contract_address))
 
 #Get an instance of the contract at the accepted address
