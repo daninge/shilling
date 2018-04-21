@@ -1,28 +1,25 @@
 pragma solidity ^0.4.17;
 
 contract GenesisContract {
-    address[10] available_contracts;
+    address available_contract;
 
-    function getAvailableContracts() public view returns (address[10]){
-        return available_contracts;
-    }
-
-    function submitContract(address a) public returns (int){
-        for(uint i = 0; i < 10; i++){
-            if(available_contracts[i] == 0){
-                available_contracts[i] = a;
-                return 1;
-            }
-        }
-        return -1;
+    function submitContract(address a) public{
+        // for(uint i = 0; i < 10; i++){
+        //     if(available_contracts[i] == 0){
+        //         available_contracts[i] =  a;
+        //     }
+        // }
+        available_contract = a;
     }
 
     function getContract() public returns (address) {
-        if(available_contracts.length == 0){
-            return 0;
-        }
-        address to_return = available_contracts[available_contracts.length - 1];
-        delete available_contracts[available_contracts.length - 1];  
-        return to_return;
+        // for(uint i = 0; i < 10; i++){
+        //     if(available_contracts[i] != 0){
+        //         address to_return = available_contracts[i];
+        //         available_contracts[i] = 0;
+        //         return to_return;
+        //     }
+        // }
+        return available_contract;
     }
 }

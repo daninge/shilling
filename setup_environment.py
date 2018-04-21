@@ -12,8 +12,12 @@ genesis_id = w3.eth.accounts[0]
 new = s.make_contract(w3, "GenesisContract")
 tx_hash = new.constructor().transact(transaction={'from': genesis_id})
 receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    #proof_request = s.get_contract_instance(w3, receipt['contractAddress'], "Genesis")
+genesis_contract = s.get_contract_instance(w3, receipt['contractAddress'], "GenesisContract")
+# print(receipt['contractAddress'])
+# print(genesis_contract.getContract())
+# genesis_contract.submitContract(genesis_id, transact={'from':genesis_id})
 
+# print(genesis_contract.getContract())
 f= open("genesis_address.txt","w+")
 f.write(receipt['contractAddress'])
 # print(contract.getAvailableContracts())

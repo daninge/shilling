@@ -31,7 +31,7 @@ storage_request = s.get_contract_instance(w3, receipt['contractAddress'], "Stora
 
 print("Publicising available contract to mining pool")
 print("contract Address "+str(receipt['contractAddress']))
-genesis_contract.submitContract(receipt['contractAddress']).transact(transaction={'from': client_account})
+genesis_contract.submitContract(receipt['contractAddress'])
 
 #wait for a miner to accept
 while storage_request.getStorer() == None:
