@@ -35,7 +35,7 @@ def prove (address):
     
     #generate proof here
     print("PROOF")
-    proof = pdp.gen_proof((N,g), len(file), (c, k1, k2, (g ** ss)), pdp.get_tags(60), data)
+    proof = pdp.gen_proof((N,g), pdp.get_num_blocks(file_id), (c, k1, k2, (g ** ss)), pdp.get_tags(60), data)
     proofbytes = str(json.dumps(proof)).encode('utf-8')
     return proofbytes
     #print("generating a local proof")
@@ -83,7 +83,7 @@ while True:
     print(proof_request_list)
     if len(proof_request_list) > num_proofs_so_far:
         print("proof requested at address"+str(num_proofs_so_far))
-        print(get_tags(60))
+        #print(get_tags(60))
         proof = prove(proof_request_list[num_proofs_so_far])
         
         #get this proof request

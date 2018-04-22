@@ -92,13 +92,14 @@ while True:
     while True:
         print("Waiting for proof from"+str(storage_request.getStorer()))
         #print(proof_request.getProof())
+        time.sleep(2)
         if proof_request.getProof() != b'':
             break
     proof_received = json.loads(proof_request.getProof().decode('utf-8'))
     print("Received proof")
     print(proof_received)
 
-    if pdp.check_proof(pk, sk, (c, k1, k2, ss), pdp.get_tags(60)):
+    if pdp.check_proof(pk, sk, (c, k1, k2, ss), proof_received):
         print("TRUE TRUE TRUE")
     else:
         print("FALSE FALSE FALSE")

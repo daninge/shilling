@@ -92,10 +92,6 @@ def generate_coefficients(k ,c):
     return coefficients
     #return [5, 10]
 
-def get_message(i):
-    print("returning block "+str(i))
-    return file[i]
-
 #f is number of avaliable blocks
 def gen_proof(pk, f, chal, tags, actual_blocks):
     c, k1, k2, gs = chal
@@ -154,7 +150,7 @@ def check_proof(pk, sk, chal, V):
     curvy_t = pow(V[0], sk[0], pk[0])
     print("after")
     #generate challenge blocks
-    challenge_blocks = get_challenge_blocks(k1, c, len(file))
+    challenge_blocks = get_challenge_blocks(k1, c, get_num_blocks(60))
     
     #generate coefficients
     coefficients = generate_coefficients(k2, c)
