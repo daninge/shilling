@@ -5,7 +5,7 @@ import random
 import hashlib
 from fractions import gcd
 from decimal import *
-
+import os 
 prime_len = 256
 
 
@@ -30,11 +30,24 @@ def is_good_number(a, p, q ):
         return False
     return True
 
+def get_data(file_name, challenge_block):
+   # return file[challenge_block]
+    f = open("files/kung.jpg", 'rb')
+    file_size = os.stat("files/kung.jpg").st_size
+    #print("number of blocks = "+str(int(file_size / 1000)))
+    f.seek(1000 * challenge_block)
+    stuff = int.from_bytes(bytes(f.read(1000)), byteorder='little')
+    f.close()
+    return stuff
+
+def get_num_blocks(file_name):
+    file_size = os.stat("files/kung.jpg").st_size
+    return int(file_size / 1000)
 
 ####################
 #Usable functions below here
 
-file = [1234, 5678, 9101, 1213,1234, 4321, 5678]
+#file = [1234, 5678, 9101, 1213,1234, 4321, 5678]
 
 def sha(num):
     h = hashlib.sha256()
@@ -78,7 +91,7 @@ def get_message(i):
     return file[i]
 
 #f is number of avaliable blocks
-def gen_proof(pk, f, chal, tags):
+def gen_proof(pk, f, chal, tags, actual_blocks):
     c, k1, k2, gs = chal
     
     #generate challenge blocks
@@ -94,13 +107,13 @@ def gen_proof(pk, f, chal, tags):
         block_num = challenge_blocks[i]
         coeff = coefficients[i]
         ti, wi = tags[block_num]
-        T = T * (ti ** coeff)
+        T = T * pow(ti, coeff, pk[0])
 
     exponent = 0
     for i in range(0, c):
         block_num = challenge_blocks[i]
         coeff = coefficients[i]
-        m = get_message(block_num)
+        m = actual_blocks[i]
         exponent = exponent + (coeff * m)
     
     rho = sha(pow(gs, exponent, pk[0]))
@@ -128,7 +141,7 @@ def mod_divide(a, b, m):
     else:
         return (inv * a) % m
     
-def check_proof(pk, sk, chal, V):
+def check_proof(pk, sk, chal, V, actual_blocks):
     c, k1, k2, gs = chal
     print("before")
     # curvy_t = T * e

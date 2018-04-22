@@ -16,7 +16,7 @@ pip-selfcheck*
 activate*
 venv*
 venv/*
-
+files/
 # Want to ignore log files
 __pycache__/
 genesis_address.txt

@@ -3,6 +3,7 @@ import time
 import setup as s
 import pdp
 import json
+import os
 
 w3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
 
@@ -15,10 +16,6 @@ def get_tags(file_id):
     tags = f.read()
     return json.loads(tags)
 
-def get_data(file_name, challenge_block):
-    return file[challenge_block]
-    #return f.read()
-    
 def prove (address):
     print("prove")
     print(address)
@@ -26,13 +23,16 @@ def prove (address):
     c, k1, k2, ss, N, g  = proof_request_contract.getChallenge()
     file_id = proof_request_contract.getFileId()
     #challege_data = get_data(file_id, challenge)
-    challenge_blocks = pdp.get_challenge_blocks(k1, c, len(file))
+    challenge_blocks = pdp.get_challenge_blocks(k1, c, pdp.get_num_blocks(file_id))
     print("challenge blocks")
     print(challenge_blocks)
     data = []
-    for index in challenge_blocks:
-        data.append(get_data(60, index))
+    print("data")
 
+    for index in challenge_blocks:
+        data.append(pdp.get_data(file_id, index))
+
+    #print(data)
     #if proofs should be outsourced
     if IS_OUTSOURCING_PROOFS:
         print("is outsourcing proofs")
@@ -40,8 +40,10 @@ def prove (address):
     
     #generate proof here
     print("PROOF")
-    print(pdp.gen_proof((N,g), len(file), (c, k1, k2, (g ** ss)), get_tags(60)))
-    print("generating a local proof")
+    proof = pdp.gen_proof((N,g), len(file), (c, k1, k2, (g ** ss)), get_tags(60), data)
+    proofbytes = str(json.dumps(proof)).encode('utf-8')
+    return proofbytes
+    #print("generating a local proof")
 
 
 
@@ -87,9 +89,13 @@ while True:
     if len(proof_request_list) > num_proofs_so_far:
         print("proof requested at address"+str(num_proofs_so_far))
         print(get_tags(60))
-        prove(proof_request_list[num_proofs_so_far])
+        proof = prove(proof_request_list[num_proofs_so_far])
+        
+        #get this proof request
+        this_proof = s.get_contract_instance(w3, proof_request_list[num_proofs_so_far], "StorageProof")
+        this_proof.submitProof(proof, transact={'from': storer_id})
         num_proofs_so_far += 1
-        print("proof successful, waiting for more proof requests")
+        print("Proof submitted for approval")
         assert(False)
 
 

@@ -13,7 +13,6 @@ file = [1234, 5678, 9101, 1213, 1234, 4321, 5678]
 ###################
 #Client logic below here
 
-
 file_id = 60
 
 #client_account
@@ -60,7 +59,7 @@ tags = []
 for i in range(0, len(file)):
     tags.append(pdp.tag_block(pk, sk, file[i], i))
 
-print(tags)
+#print(tags)
 f = open(str(file_id)+"-tags.txt", 'w')
 f.write(json.dumps(tags))
 f.flush()
@@ -71,10 +70,10 @@ while True:
     print("Requesting proof of storage")
 
     #generate new challenge
-    c = random.randint(0, len(file))
-    k1 = random.randint(0, 10000)
-    k2 = random.randint(0, 10000)
-    ss = random.randint(0, 10000)
+    c = random.randint(0, pdp.get_num_blocks(file_id))
+    k1 = random.randint(0, 1000)
+    k2 = random.randint(0, 1000)
+    ss = random.randint(0, 1000)
     print("nino")
 
     #generate new proof request contract + push to network
@@ -89,6 +88,18 @@ while True:
     #pulicise storage proof
     print("publicising new proof at "+receipt['contractAddress'])
     storage_request.requestProof(receipt['contractAddress'], transact={'from': client_account})
+
+    while True:
+        print("Waiting for proof from"+str(storage_request.getStorer()))
+        #print(proof_request.getProof())
+        if proof_request.getProof() != b'':
+            break
+    proof_received = json.loads(proof_request.getProof().decode('utf-8'))
+    print("Received proof")
+    print(proof_received)
+
+    assert(False)
+
 
 
 
