@@ -96,6 +96,7 @@ def generate_coefficients(k ,c):
 def gen_proof(pk, f, chal, tags, actual_blocks):
     c, k1, k2, gs = chal
     
+    print(actual_blocks)
     #generate challenge blocks
     challenge_blocks = get_challenge_blocks(k1, c, f)
     
@@ -156,52 +157,40 @@ def check_proof(pk, sk, chal, V):
     coefficients = generate_coefficients(k2, c)
     print("initial +"+str(curvy_t))
     for i in range(0, c):
-        wi = str(sk[2] + (challenge_blocks[i] << 256)).encode('utf-8')
-        #print(wi)
-        #print("///////////")
-        h = hashlib.sha256()
-        h.update(wi)
-        hash_output = int(h.hexdigest(), 16) % pk[0]
-        print("hmml")
-        curvy_t = mod_divide(curvy_t, pow(hash_output, coefficients[i]), pk[0])
-        #curvy_t = (curvy_t / pow(hash_output, coefficients[i])) % pk[0]
-    #print("curvy t = "+str(curvy_t))
-
-    h = hashlib.sha256()
-    h.update(str(pow(curvy_t, chal[3], pk[0])).encode('utf-8'))
-    hash_output = int(h.hexdigest(), 16) % pk[0]
-    print(hash_output)
-    if hash_output == V[1]:
+        wi = sk[2] + (i << 256)
+        curvy_t = mod_divide(curvy_t, pow(sha(wi), coefficients[i]), pk[0])
+   
+    print(V[1])
+    output = sha(pow(curvy_t, chal[3], pk[0]))
+    print(output)
+    if output == V[1]:
         return True
     else:
         return False
 
 my_file = "kung.jpg"
 
-tags = []
 pk, sk = key_gen()
 
-#print(sk)
-#on the client
-for i in range(0, get_num_blocks(my_file)):
-    print("tagging block "+str(i))
-    tag = tag_block(pk, sk, get_data(my_file, i), i)
-    print(tag)
-    tags.append(tag)
+print("pk = "+str(pk))
+print("sk = "+str(sk))
+
+data = []
+tags = []
 
 chal = (2, 2, 4, pk[1] ** 4)
-#print(tags)
-print("here")
-#print("e "+)
 
 challenge_blocks = get_challenge_blocks(chal[1], chal[0], get_num_blocks(my_file))
 print(challenge_blocks)
-data = []
-for index in challenge_blocks:
-    data.append(get_data(my_file, index))
+#on the client
+for i in range(0, get_num_blocks(my_file)):
+    block = get_data(my_file, i)
+    if i in challenge_blocks:
+        data.append(block)
+    tag = tag_block(pk, sk, block, i)
+    tags.append(tag)
 
 proof = gen_proof(pk, get_num_blocks(my_file), chal, tags, data)
-print("proof")
-print(proof)
+
 chal = (2, 2, 4, 4)
 print(check_proof(pk, sk, chal, proof))
