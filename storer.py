@@ -1,35 +1,73 @@
 from web3 import Web3, HTTPProvider
 import time
-import pprint
+import setup as s
+import pdp
 
-pp = pprint.PrettyPrinter(indent = 4)
+w3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
 
-w3 = Web3(HTTPProvider('http://127.0.0.1:7545'));
+IS_OUTSOURCING_PROOFS = False
 
 
-def init():
-   # abi = '[{'stateMutability': 'nonpayable', 'type': 'function', 'payable': False, 'inputs': [{'type': 'string', 'name': '_greeting'}], 'outputs': [], 'constant': False, 'name': 'setGreeting'}, {'stateMutability': 'view', 'type': 'function', 'payable': False, 'inputs': [], 'outputs': [{'type': 'string', 'name': ''}], 'constant': True, 'name': 'greet'}, {'stateMutability': 'view', 'type': 'function', 'payable': False, 'inputs': [], 'outputs': [{'type': 'string', 'name': ''}], 'constant': True, 'name': 'greeting'}, {'stateMutability': 'nonpayable', 'inputs': [], 'payable': False, 'type': 'constructor'}]'
-    # contract = w3.eth.contract(address='0x99E6EE18a8064aEf39e7fD87686458a9Ec5d0571')
-    # print(contract.functions.__str__())
-    printed = w3.eth.blockNumber
-    while(True):
-        time.sleep(1)
-        while printed < w3.eth.blockNumber:
-            printed+=1
-            print("RECEIVED BLOCK "+str(printed))
-            block_received(printed)
+def get_data(file_name, challenge_block):
+    f = open("files/"+str(file_name)+".txt", r)
+    return f.read()
+    
+def prove (address):
+    proof_request_contract = s.get_contract_instance(w3, address, "StorageProof")
+    challenge  = proof_request_contract.getChallenge()
+    file_id = proof_request_contract.getFileId()
+    challege_data = get_data(file_id, challenge)
 
-def process_transaction(transaction):
-    #print("Processing t")
-    #pp.pprint(transaction)
-    #ascii = Web3.toAscii(transaction.input)
-    print(transaction)
+    #if proofs should be outsourced
+    if IS_OUTSOURCING_PROOFS:
+        print("is outsourcing proofs")
+        #do shit here
+    
+    #generate proof here
+    print("generating a local proof")
 
-def block_received(block_number):
-    block = w3.eth.getBlock(block_number);
-    print(block)
-    for i in range(0, len(block.transactions)):
-        print("Processing Transaction "+ str(i)+ " from block "+str(block_number))
-        process_transaction(w3.eth.getTransactionFromBlock(block.number, i))
 
-init();
+#####################################################################
+#Logic starts here
+
+storer_id = w3.eth.accounts[0]
+
+#Get the genesis contract
+genesis_contract = s.get_contract_instance(w3, s.genesis_address, "GenesisContract")
+
+print("Waiting for a contract:")
+
+#print(genesis_contract.getAvailableContracts())
+
+# print(s.genesis_address)
+
+# print(genesis_contract.getContract())
+#genesis_contract.submitContract(storer_id,transact={'from': storer_id})
+#print(genesis_contract.getContract())
+contract_address = genesis_contract.getContract()
+while contract_address == None:
+    print(genesis_contract.getContract())
+    time.sleep(1)
+    contract_address = genesis_contract.getContract()
+
+print("Accepting storage contract at address "+str(contract_address))
+
+#Get an instance of the contract at the accepted address
+current_contract = s.get_contract_instance(w3, contract_address, "RequestStorageContract")
+current_contract.setStorer(storer_id, transact={'from': storer_id})
+
+#records the number of proofs we have submitted so far
+num_proofs_so_far = 0
+
+print("waiting for proof requests")
+#respond to requests for proofs of storage
+while True:
+    time.sleep(1)
+    proof_request_list = current_contract.getProofs()
+    if len(proof_request_list) > num_proofs_so_far:
+        num_proofs_so_far += 1
+        print("proof requested at address"+str(num_proofs_so_far))
+        prove(proof_request_list[num_proofs_so_far])
+        print("proof successful, waiting for more proof requests")
+
+

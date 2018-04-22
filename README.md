@@ -14,13 +14,13 @@ source venv/bin/activate
 ```
 You can confirm using ```which python``` whether or not you are using a system Python installation or the one from the virtual environment. 
 
-The dependencies include ```web3``` and ```solc```. To install these, run
+To install the dependencies, run
 ```
 brew tap ethereum/ethereum
 brew install solidity
-pip3 install web3
-pip3 install py-solc
+pip3 install -r packages.txt
 ```
+Other than Python libraries, we also require Truffle Ganache, which can be downloaded [here](http://truffleframework.com/ganache/).
 
 ## Overview
 
@@ -31,8 +31,7 @@ Our system will consider the following four adversarial nodes:
 * __Retrieval Miners:__ These nodes act as file servers for the network for a fee.
 * __Proof Miners:__ These nodes will perform proof-of-works for more computationally limited devices for a fee.
 
-
-![POWDiagram1](docs/shillingdiagram1.png)
+<img src="docs/diagram1.png" width="400"> <img src="docs/diagram2.png" width="450">
 
 
 ## Acknowledgements
