@@ -20,3 +20,7 @@ venv/*
 # Want to ignore log files
 __pycache__/
 genesis_address.txt
+
+# Ignore txt files
+*.txt
+*.log

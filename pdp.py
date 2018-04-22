@@ -8,13 +8,20 @@ from decimal import *
 
 prime_len = 256
 
+
+
 def g(p, q):
     a = random.randint(1, p * q)
-    while not isGoodNumber(a, p, q):
+    while not is_good_number(a, p, q):
         a = random.randint(1, p * q) 
     return a    
 
-def isGoodNumber(a, p, q ): 
+"""
+Checks whether or not a, p, q work for our scheme. We want the following
+    a =/= -1, 0, 1   (mod p)
+    a =/= -1, 0, 1   (mod q)
+"""
+def is_good_number(a, p, q ): 
     aModP = a % p
     if aModP == 0 or aModP == 1 or aModP == (p-1):
         return False
