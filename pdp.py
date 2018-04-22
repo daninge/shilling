@@ -70,7 +70,7 @@ def key_gen():
 
 def tag_block(pk, sk, m, i):
     wi = sk[2] + (i << 256)
-    t = pow( (sha(wi) * (pk[1] ** m)), sk[1], pk[0])
+    t = pow( (sha(wi) * pow(pk[1], m, pk[0])), sk[1], pk[0])
     return (t, wi)
 
 def get_challenge_blocks(k, c, f):
@@ -156,7 +156,7 @@ def check_proof(pk, sk, chal, V):
     coefficients = generate_coefficients(k2, c)
     print("initial +"+str(curvy_t))
     for i in range(0, c):
-        wi = str(sk[2] + (challenge_blocks[i] << 512)).encode('utf-8')
+        wi = str(sk[2] + (challenge_blocks[i] << 256)).encode('utf-8')
         #print(wi)
         #print("///////////")
         h = hashlib.sha256()
@@ -176,25 +176,33 @@ def check_proof(pk, sk, chal, V):
     else:
         return False
 
+my_file = "kung.jpg"
 
-# tags = []
-# pk, sk = key_gen()
+tags = []
+pk, sk = key_gen()
 
-# #print(sk)
-# #on the client
-# for i in range(0, len(file)):
-#     print("tagging block "+str(i))
-#     tag = tag_block(pk, sk, get_message(i), i)
-#     print(tag)
-#     tags.append(tag)
+#print(sk)
+#on the client
+for i in range(0, get_num_blocks(my_file)):
+    print("tagging block "+str(i))
+    tag = tag_block(pk, sk, get_data(my_file, i), i)
+    print(tag)
+    tags.append(tag)
 
-# chal = (2, 2, 4, pk[1] ** 4)
-# #print(tags)
-# print("here")
-# #print("e "+)
-# proof = gen_proof(pk, len(file), chal, tags)
-# print("proof")
-# print(proof)
-# chal = (2, 2, 4, 4)
-# proof = (proof[0]+1, proof[1])
-# print(check_proof(pk, sk, chal, proof))
+chal = (2, 2, 4, pk[1] ** 4)
+#print(tags)
+print("here")
+#print("e "+)
+
+challenge_blocks = get_challenge_blocks(chal[1], chal[0], get_num_blocks(my_file))
+
+data = []
+for index in challenge_blocks:
+    data.append(get_data(my_file, index))
+
+proof = gen_proof(pk, get_num_blocks(my_file), chal, tags, data)
+print("proof")
+print(proof)
+chal = (2, 2, 4, 4)
+proof = (proof[0], proof[1])
+print(check_proof(pk, sk, chal, proof))
