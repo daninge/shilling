@@ -98,6 +98,11 @@ while True:
     print("Received proof")
     print(proof_received)
 
+    if pdp.check_proof(pk, sk, (c, k1, k2, ss), pdp.get_tags(60)):
+        print("TRUE TRUE TRUE")
+    else:
+        print("FALSE FALSE FALSE")
+
     assert(False)
 
 

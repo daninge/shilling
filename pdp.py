@@ -6,6 +6,7 @@ import hashlib
 from fractions import gcd
 from decimal import *
 import os 
+import json
 prime_len = 256
 
 
@@ -29,6 +30,11 @@ def is_good_number(a, p, q ):
     if aModQ == 0 or aModQ == 1 or aModQ == (q-1):
         return False
     return True
+
+def get_tags(file_id):
+    f = open(str(file_id)+"-tags.txt", 'r')
+    tags = f.read()
+    return json.loads(tags)
 
 def get_data(file_name, challenge_block):
    # return file[challenge_block]
@@ -141,7 +147,7 @@ def mod_divide(a, b, m):
     else:
         return (inv * a) % m
     
-def check_proof(pk, sk, chal, V, actual_blocks):
+def check_proof(pk, sk, chal, V):
     c, k1, k2, gs = chal
     print("before")
     # curvy_t = T * e

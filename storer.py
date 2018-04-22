@@ -11,11 +11,6 @@ IS_OUTSOURCING_PROOFS = False
 
 file = [1234, 5678, 9101, 1213, 1234, 4321, 5678]
 
-def get_tags(file_id):
-    f = open(str(file_id)+"-tags.txt", 'r')
-    tags = f.read()
-    return json.loads(tags)
-
 def prove (address):
     print("prove")
     print(address)
@@ -40,7 +35,7 @@ def prove (address):
     
     #generate proof here
     print("PROOF")
-    proof = pdp.gen_proof((N,g), len(file), (c, k1, k2, (g ** ss)), get_tags(60), data)
+    proof = pdp.gen_proof((N,g), len(file), (c, k1, k2, (g ** ss)), pdp.get_tags(60), data)
     proofbytes = str(json.dumps(proof)).encode('utf-8')
     return proofbytes
     #print("generating a local proof")
