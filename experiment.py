@@ -27,7 +27,7 @@ print("Requesting storage for file "+str(file_id))
 new_storage_request = s.make_contract(w3, "RequestStorageContract")
 tx_hash = new_storage_request.constructor(fileIdIn=file_id, requestorIn=client_account).transact(transaction={'from': client_account})
 receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-storage_request = s.get_contract_instance(w3, receipt['contractAddress'], "StorageProof")
+storage_request = s.get_contract_instance(w3, receipt['contractAddress'], "RequestStorageContract")
 
 print("Publicising available contract to mining pool")
 print("contract Address "+str(receipt['contractAddress']))
@@ -85,9 +85,8 @@ while True:
     proof_request = s.get_contract_instance(w3, receipt['contractAddress'], "StorageProof")
     print("name's")
 
-    #
-
-    #while proof_request.
+    #pulicise storage proof
+    storage_request.requestProof(receipt['contractAddress'], transact={'from': client_account})
 
 
 
