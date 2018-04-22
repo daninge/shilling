@@ -151,7 +151,7 @@ def check_proof(pk, sk, chal, V):
     print("after")
     #generate challenge blocks
     challenge_blocks = get_challenge_blocks(k1, c, get_num_blocks(60))
-    
+    print(challenge_blocks)
     #generate coefficients
     coefficients = generate_coefficients(k2, c)
     print("initial +"+str(curvy_t))
@@ -176,33 +176,32 @@ def check_proof(pk, sk, chal, V):
     else:
         return False
 
-# my_file = "kung.jpg"
+my_file = "kung.jpg"
 
-# tags = []
-# pk, sk = key_gen()
+tags = []
+pk, sk = key_gen()
 
-# #print(sk)
-# #on the client
-# for i in range(0, get_num_blocks(my_file)):
-#     print("tagging block "+str(i))
-#     tag = tag_block(pk, sk, get_data(my_file, i), i)
-#     print(tag)
-#     tags.append(tag)
+#print(sk)
+#on the client
+for i in range(0, get_num_blocks(my_file)):
+    print("tagging block "+str(i))
+    tag = tag_block(pk, sk, get_data(my_file, i), i)
+    print(tag)
+    tags.append(tag)
 
-# chal = (2, 2, 4, pk[1] ** 4)
-# #print(tags)
-# print("here")
-# #print("e "+)
+chal = (2, 2, 4, pk[1] ** 4)
+#print(tags)
+print("here")
+#print("e "+)
 
-# challenge_blocks = get_challenge_blocks(chal[1], chal[0], get_num_blocks(my_file))
+challenge_blocks = get_challenge_blocks(chal[1], chal[0], get_num_blocks(my_file))
+print(challenge_blocks)
+data = []
+for index in challenge_blocks:
+    data.append(get_data(my_file, index))
 
-# data = []
-# for index in challenge_blocks:
-#     data.append(get_data(my_file, index))
-
-# proof = gen_proof(pk, get_num_blocks(my_file), chal, tags, data)
-# print("proof")
-# print(proof)
-# chal = (2, 2, 4, 4)
-# proof = (proof[0], proof[1])
-# print(check_proof(pk, sk, chal, proof))
+proof = gen_proof(pk, get_num_blocks(my_file), chal, tags, data)
+print("proof")
+print(proof)
+chal = (2, 2, 4, 4)
+print(check_proof(pk, sk, chal, proof))

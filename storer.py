@@ -9,24 +9,29 @@ w3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
 
 IS_OUTSOURCING_PROOFS = False
 
-file = [1234, 5678, 9101, 1213, 1234, 4321, 5678]
-
 def prove (address):
     print("prove")
     print(address)
     proof_request_contract = s.get_contract_instance(w3, address, "StorageProof")
     c, k1, k2, ss, N, g  = proof_request_contract.getChallenge()
+    print(c)
+    print(k1)
+    print(k2)
+    print(ss)
+    print(N)
+    print(g)
     file_id = proof_request_contract.getFileId()
     #challege_data = get_data(file_id, challenge)
     challenge_blocks = pdp.get_challenge_blocks(k1, c, pdp.get_num_blocks(file_id))
     print("challenge blocks")
     print(challenge_blocks)
     data = []
-    print("data")
 
     for index in challenge_blocks:
         data.append(pdp.get_data(file_id, index))
 
+    print("data")
+    print(data)
     #print(data)
     #if proofs should be outsourced
     if IS_OUTSOURCING_PROOFS:

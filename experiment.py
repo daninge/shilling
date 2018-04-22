@@ -8,12 +8,10 @@ import random
 import pdp
 import json
 
-file = [1234, 5678, 9101, 1213, 1234, 4321, 5678]
-
 ###################
 #Client logic below here
 
-file_id = 60
+file_name = 59
 
 #client_account
 client_account = w3.eth.accounts[2]
@@ -21,11 +19,11 @@ client_account = w3.eth.accounts[2]
 #Get the genesis contract
 genesis_contract = s.get_contract_instance(w3, s.genesis_address, "GenesisContract")
 
-print("Requesting storage for file "+str(file_id))
+print("Requesting storage for file "+str(file_name))
 
 #request storage
 new_storage_request = s.make_contract(w3, "RequestStorageContract")
-tx_hash = new_storage_request.constructor(fileIdIn=file_id, requestorIn=client_account).transact(transaction={'from': client_account})
+tx_hash = new_storage_request.constructor(fileIdIn=file_name, requestorIn=client_account).transact(transaction={'from': client_account})
 receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 storage_request = s.get_contract_instance(w3, receipt['contractAddress'], "RequestStorageContract")
 
@@ -56,11 +54,11 @@ pk, sk = pdp.key_gen()
 tags = []
 
 #generate tags
-for i in range(0, len(file)):
-    tags.append(pdp.tag_block(pk, sk, file[i], i))
+for i in range(0, pdp.get_num_blocks(file_name)):
+    tags.append(pdp.tag_block(pk, sk, pdp.get_data(file_name, i), i))
 
 #print(tags)
-f = open(str(file_id)+"-tags.txt", 'w')
+f = open(str(file_name)+"-tags.txt", 'w')
 f.write(json.dumps(tags))
 f.flush()
 
@@ -70,15 +68,21 @@ while True:
     print("Requesting proof of storage")
 
     #generate new challenge
-    c = random.randint(0, pdp.get_num_blocks(file_id))
+    c = random.randint(0, pdp.get_num_blocks(file_name))
     k1 = random.randint(0, 1000)
     k2 = random.randint(0, 1000)
     ss = random.randint(0, 1000)
     print("nino")
 
+    print(c)
+    print(k1)
+    print(k2)
+    print(ss)
+    print(pk[0])
+    print(pk[1])
     #generate new proof request contract + push to network
     new_storage_proof = s.make_contract(w3, "StorageProof")
-    tx_hash = new_storage_proof.constructor(storerIn=storer_id, fileIdIn=file_id, cIn = c, k1In = k1, k2In = k2, gsIn =ss, NIn = pk[0], gIn=pk[1]).transact(transaction={'from': client_account})
+    tx_hash = new_storage_proof.constructor(storerIn=storer_id, fileIdIn=file_name, cIn = c, k1In = k1, k2In = k2, gsIn =ss, NIn = pk[0], gIn=pk[1]).transact(transaction={'from': client_account})
     print("hello")
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     print("my")
@@ -92,7 +96,7 @@ while True:
     while True:
         print("Waiting for proof from"+str(storage_request.getStorer()))
         #print(proof_request.getProof())
-        time.sleep(2)
+        time.sleep(1)
         if proof_request.getProof() != b'':
             break
     proof_received = json.loads(proof_request.getProof().decode('utf-8'))
