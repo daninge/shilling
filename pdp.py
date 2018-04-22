@@ -5,24 +5,52 @@ import random
 import hashlib
 from fractions import gcd
 from decimal import *
-import os 
-import json
-prime_len = 256
+import os
+# pprime = None
+# p = 2 * pprime + 1
+# qprime = None
+# q = 2* qprime + 1
+# N = p * q
 
 
+
+# def g() :
+
+# (pubkey, privkey) = rsa.newkeys(2048)
+# # print(pubkey)
+# #print(privkey)
+
+# print(privkey.n)
+# print("//////////")
+# print(privkey.p*privkey.q)
+
+# p = privkey.p 
+# q = privkey.q 
+# N = privkey.n
+
+prime_len = 512
+
+
+# def g(n) : 
+#     i = 1
+#     while i < n:
+#         r = i ** 2
+#         if gcd(r + 1, n)==1 and gcd(r - 1, n)==1:
+#             return r
+#         else:
+#             i += 1
+#     return None
+def get_num_blocks(file_name):
+    file_size = os.stat("files/kung.jpg").st_size
+    return int(file_size / 1000)
 
 def g(p, q):
     a = random.randint(1, p * q)
-    while not is_good_number(a, p, q):
+    while not isGoodNumber(a, p, q):
         a = random.randint(1, p * q) 
     return a    
 
-"""
-Checks whether or not a, p, q work for our scheme. We want the following
-    a =/= -1, 0, 1   (mod p)
-    a =/= -1, 0, 1   (mod q)
-"""
-def is_good_number(a, p, q ): 
+def isGoodNumber(a, p, q ): 
     aModP = a % p
     if aModP == 0 or aModP == 1 or aModP == (p-1):
         return False
@@ -31,29 +59,11 @@ def is_good_number(a, p, q ):
         return False
     return True
 
-def get_tags(file_id):
-    f = open(str(file_id)+"-tags.txt", 'r')
-    tags = f.read()
-    return json.loads(tags)
-
-def get_data(file_name, challenge_block):
-   # return file[challenge_block]
-    f = open("files/kung.jpg", 'rb')
-    file_size = os.stat("files/kung.jpg").st_size
-    #print("number of blocks = "+str(int(file_size / 1000)))
-    f.seek(1000 * challenge_block)
-    stuff = int.from_bytes(bytes(f.read(1000)), byteorder='little')
-    f.close()
-    return stuff
-
-def get_num_blocks(file_name):
-    file_size = os.stat("files/kung.jpg").st_size
-    return int(file_size / 1000)
 
 ####################
 #Usable functions below here
 
-#file = [1234, 5678, 9101, 1213,1234, 4321, 5678]
+file = [1234, 5678, 9101, 1213]
 
 def sha(num):
     h = hashlib.sha256()
@@ -61,15 +71,15 @@ def sha(num):
     return int(h.hexdigest(), 16)
 
 def key_gen():
-    (pubkey, privkey) = rsa.newkeys(256)
+    (pubkey, privkey) = rsa.newkeys(512)
     #pk = (N, g)
     pk = (privkey.n, g(privkey.p, privkey.q))
     #sk = (e, d, v)
-    sk = (privkey.e, privkey.d, random.getrandbits(256))
+    sk = (privkey.e, privkey.d, random.getrandbits(512))
     return (pk, sk)
 
 def tag_block(pk, sk, m, i):
-    wi = sk[2] + (i << 256)
+    wi = sk[2] + (i << 512)
     t = pow( (sha(wi) * pow(pk[1], m, pk[0])), sk[1], pk[0])
     return (t, wi)
 
@@ -81,25 +91,38 @@ def get_challenge_blocks(k, c, f):
         while something in challenge_blocks:
             something = random.randrange(f)
         challenge_blocks.append(something)  
-    return challenge_blocks
-    #return [0, 2]
+    #return challenge_blocks
+    return [0, 2]
 
 def generate_coefficients(k ,c):
     random.seed(k)
     coefficients = []
     for i in range(0, c):
         coefficients.append(random.randint(0, 2000))
-    return coefficients
-    #return [5, 10]
+    #return coefficients
+    return [5, 10]
+
+def get_data(file_name, challenge_block):
+   # return file[challenge_block]
+    f = open("files/kung.jpg", 'rb')
+    file_size = os.stat("files/kung.jpg").st_size
+    #print("number of blocks = "+str(int(file_size / 1000)))
+    f.seek(1000 * challenge_block)
+    stuff = int.from_bytes(bytes(f.read(1000)), byteorder='little')
+    f.close()
+    return stuff
+
+def get_message(i):
+    print("returning block "+str(i))
+    return get_data("kung.jpg", i)
 
 #f is number of avaliable blocks
-def gen_proof(pk, f, chal, tags, actual_blocks):
+def gen_proof(pk, f, chal, tags, data):
     c, k1, k2, gs = chal
     
-    print(actual_blocks)
     #generate challenge blocks
     challenge_blocks = get_challenge_blocks(k1, c, f)
-    
+    print(challenge_blocks)
     print("raymond")
     #generate coefficients
     coefficients = generate_coefficients(k2, c)
@@ -110,13 +133,14 @@ def gen_proof(pk, f, chal, tags, actual_blocks):
         block_num = challenge_blocks[i]
         coeff = coefficients[i]
         ti, wi = tags[block_num]
-        T = T * pow(ti, coeff, pk[0])
+        T = T * (ti ** coeff)
 
     exponent = 0
     for i in range(0, c):
         block_num = challenge_blocks[i]
         coeff = coefficients[i]
-        m = actual_blocks[i]
+        #m = get_message(block_num)
+        m = data[i]
         exponent = exponent + (coeff * m)
     
     rho = sha(pow(gs, exponent, pk[0]))
@@ -151,46 +175,59 @@ def check_proof(pk, sk, chal, V):
     curvy_t = pow(V[0], sk[0], pk[0])
     print("after")
     #generate challenge blocks
-    challenge_blocks = get_challenge_blocks(k1, c, get_num_blocks(60))
-    print(challenge_blocks)
+    challenge_blocks = get_challenge_blocks(k1, c, get_num_blocks("kung.jpg"))
+    
     #generate coefficients
     coefficients = generate_coefficients(k2, c)
     print("initial +"+str(curvy_t))
     for i in range(0, c):
-        wi = sk[2] + (i << 256)
-        curvy_t = mod_divide(curvy_t, pow(sha(wi), coefficients[i]), pk[0])
-   
-    print(V[1])
-    output = sha(pow(curvy_t, chal[3], pk[0]))
-    print(output)
-    if output == V[1]:
+        wi = str(sk[2] + (challenge_blocks[i] << 512)).encode('utf-8')
+        #print(wi)
+        #print("///////////")
+        h = hashlib.sha256()
+        h.update(wi)
+        hash_output = int(h.hexdigest(), 16) % pk[0]
+        print("hmml")
+        curvy_t = mod_divide(curvy_t, pow(hash_output, coefficients[i]), pk[0])
+        #curvy_t = (curvy_t / pow(hash_output, coefficients[i])) % pk[0]
+    #print("curvy t = "+str(curvy_t))
+
+    h = hashlib.sha256()
+    h.update(str(pow(curvy_t, chal[3], pk[0])).encode('utf-8'))
+    hash_output = int(h.hexdigest(), 16) % pk[0]
+    print(hash_output)
+    if hash_output == V[1]:
         return True
     else:
         return False
 
-my_file = "kung.jpg"
 
+tags = []
 pk, sk = key_gen()
 
-print("pk = "+str(pk))
-print("sk = "+str(sk))
-
-data = []
-tags = []
-
-chal = (2, 2, 4, pk[1] ** 4)
-
-challenge_blocks = get_challenge_blocks(chal[1], chal[0], get_num_blocks(my_file))
-print(challenge_blocks)
+#print(sk)
 #on the client
-for i in range(0, get_num_blocks(my_file)):
-    block = get_data(my_file, i)
-    if i in challenge_blocks:
-        data.append(block)
-    tag = tag_block(pk, sk, block, i)
+for i in range(0, get_num_blocks("kung.jpg")):
+    print("tagging block "+str(i))
+    tag = tag_block(pk, sk, get_message(i), i)
+    print(tag)
     tags.append(tag)
 
-proof = gen_proof(pk, get_num_blocks(my_file), chal, tags, data)
+chal = (2, 2, 4, pk[1] ** 4)
+#print(tags)
+print("here")
 
+challenge_blocks = get_challenge_blocks(2, 2, get_num_blocks("kung.jpg"))
+print(challenge_blocks)
+data = []
+for i in range(0, get_num_blocks("kung.jpg")):
+    if i in challenge_blocks:
+        data.append(get_message(i))
+
+#print("e "+)
+proof = gen_proof(pk, get_num_blocks("kung.jpg"), chal, tags, data)
+print("proof")
+print(proof)
 chal = (2, 2, 4, 4)
+proof = (proof[0], proof[1])
 print(check_proof(pk, sk, chal, proof))
