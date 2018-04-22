@@ -62,8 +62,10 @@ num_proofs_so_far = 0
 print("waiting for proof requests")
 #respond to requests for proofs of storage
 while True:
+    print("waiting for proof requests")
     time.sleep(1)
     proof_request_list = current_contract.getProofs()
+    print(current_contract.getProofs())
     if len(proof_request_list) > num_proofs_so_far:
         num_proofs_so_far += 1
         print("proof requested at address"+str(num_proofs_so_far))
