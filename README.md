@@ -6,6 +6,15 @@ A decentralised file storage system for computationally limited devices. This wa
 
 
 ## Installation
+We rely on a submodule for the implementation of 
+[Proofs of Sequential Work](https://github.com/wfus/proof-of-sequential-work), 
+which implements the 2018 EUROCRYPT paper 
+["Simple Proofs of Sequential Work" by Cohen and Pietrzak](https://eprint.iacr.org/2018/183.pdf). 
+We use this as part of the Proof of Spacetime scheme in our project. 
+```
+git clone https://www.github.com/daninge98/shilling
+git submodule update --init --recursive
+```
 We will use a Python virtual environment for convenience. Also, packages require Python 3 in order to be run. If you haven't installed virtualenv yet, 
 ```
 pip3 install virtualenv 
