@@ -14,6 +14,7 @@ We use this as part of the Proof of Spacetime scheme in our project.
 ```
 git clone https://www.github.com/daninge98/shilling
 git submodule update --init --recursive
+git submodule foreach git pull origin master
 ```
 We will use a Python virtual environment for convenience. Also, packages require Python 3 in order to be run. If you haven't installed virtualenv yet, 
 ```
