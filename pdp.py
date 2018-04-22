@@ -6,7 +6,7 @@ import hashlib
 from fractions import gcd
 from decimal import *
 
-prime_len = 512
+prime_len = 256
 
 def g(p, q):
     a = random.randint(1, p * q)
@@ -35,15 +35,15 @@ def sha(num):
     return int(h.hexdigest(), 16)
 
 def key_gen():
-    (pubkey, privkey) = rsa.newkeys(512)
+    (pubkey, privkey) = rsa.newkeys(256)
     #pk = (N, g)
     pk = (privkey.n, g(privkey.p, privkey.q))
     #sk = (e, d, v)
-    sk = (privkey.e, privkey.d, random.getrandbits(512))
+    sk = (privkey.e, privkey.d, random.getrandbits(256))
     return (pk, sk)
 
 def tag_block(pk, sk, m, i):
-    wi = sk[2] + (i << 512)
+    wi = sk[2] + (i << 256)
     t = pow( (sha(wi) * (pk[1] ** m)), sk[1], pk[0])
     return (t, wi)
 

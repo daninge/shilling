@@ -2,21 +2,36 @@ from web3 import Web3, HTTPProvider
 import time
 import setup as s
 import pdp
+import json
 
 w3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
 
 IS_OUTSOURCING_PROOFS = False
 
+file = [1234, 5678, 9101, 1213, 1234, 4321, 5678]
+
+def get_tags(file_id):
+    f = open(str(file_id)+"-tags.txt", 'r')
+    tags = f.read()
+    return json.loads(tags)
 
 def get_data(file_name, challenge_block):
-    f = open("files/"+str(file_name)+".txt", r)
-    return f.read()
+    return file[challenge_block]
+    #return f.read()
     
 def prove (address):
+    print("prove")
+    print(address)
     proof_request_contract = s.get_contract_instance(w3, address, "StorageProof")
-    challenge  = proof_request_contract.getChallenge()
+    c, k1, k2, ss, N, g  = proof_request_contract.getChallenge()
     file_id = proof_request_contract.getFileId()
-    challege_data = get_data(file_id, challenge)
+    #challege_data = get_data(file_id, challenge)
+    challenge_blocks = pdp.get_challenge_blocks(k1, c, len(file))
+    print("challenge blocks")
+    print(challenge_blocks)
+    data = []
+    for index in challenge_blocks:
+        data.append(get_data(60, index))
 
     #if proofs should be outsourced
     if IS_OUTSOURCING_PROOFS:
@@ -24,7 +39,10 @@ def prove (address):
         #do shit here
     
     #generate proof here
+    print("PROOF")
+    print(pdp.gen_proof((N,g), len(file), (c, k1, k2, (g ** ss)), get_tags(60)))
     print("generating a local proof")
+
 
 
 #####################################################################
@@ -65,11 +83,13 @@ while True:
     print("waiting for proof requests")
     time.sleep(1)
     proof_request_list = current_contract.getProofs()
-    print(current_contract.getProofs())
+    print(proof_request_list)
     if len(proof_request_list) > num_proofs_so_far:
-        num_proofs_so_far += 1
         print("proof requested at address"+str(num_proofs_so_far))
+        print(get_tags(60))
         prove(proof_request_list[num_proofs_so_far])
+        num_proofs_so_far += 1
         print("proof successful, waiting for more proof requests")
+        assert(False)
 
 

@@ -6,6 +6,7 @@ import setup as s
 import time
 import random
 import pdp
+import json
 
 file = [1234, 5678, 9101, 1213, 1234, 4321, 5678]
 
@@ -57,11 +58,11 @@ tags = []
 
 #generate tags
 for i in range(0, len(file)):
-    tags.append(str(pdp.tag_block(pk, sk, file[i], i)))
+    tags.append(pdp.tag_block(pk, sk, file[i], i))
 
 print(tags)
 f = open(str(file_id)+"-tags.txt", 'w')
-f.writelines(tags)
+f.write(json.dumps(tags))
 f.flush()
 
 #request proofs regularly
@@ -75,17 +76,18 @@ while True:
     k2 = random.randint(0, 10000)
     ss = random.randint(0, 10000)
     print("nino")
+
     #generate new proof request contract + push to network
     new_storage_proof = s.make_contract(w3, "StorageProof")
-    #cIn = c, k1In = k1, k2In = k2, gsIn =ss
-    tx_hash = new_storage_proof.constructor(storerIn=storer_id, fileIdIn=file_id, cIn = c, k1In = k1, k2In = k2, gsIn =ss).transact(transaction={'from': client_account})
+    tx_hash = new_storage_proof.constructor(storerIn=storer_id, fileIdIn=file_id, cIn = c, k1In = k1, k2In = k2, gsIn =ss, NIn = pk[0], gIn=pk[1]).transact(transaction={'from': client_account})
     print("hello")
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     print("my")
     proof_request = s.get_contract_instance(w3, receipt['contractAddress'], "StorageProof")
-    print("name's")
+    print(proof_request.getChallenge())
 
     #pulicise storage proof
+    print("publicising new proof at "+receipt['contractAddress'])
     storage_request.requestProof(receipt['contractAddress'], transact={'from': client_account})
 
 
