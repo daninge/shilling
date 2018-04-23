@@ -29,7 +29,7 @@ import time
 # q = privkey.q 
 # N = privkey.n
 
-prime_len = 512
+prime_len = 128
 
 
 # def g(n) : 
@@ -42,7 +42,7 @@ prime_len = 512
 #             i += 1
 #     return None
 def get_num_blocks(file_name):
-    file_size = os.stat("files/kung.jpg").st_size
+    file_size = os.stat("files/somefile.txt").st_size
     return int(file_size / 1000)
 
 def g(p, q):
@@ -72,15 +72,15 @@ def sha(num):
     return int(h.hexdigest(), 16)
 
 def key_gen():
-    (pubkey, privkey) = rsa.newkeys(512)
+    (pubkey, privkey) = rsa.newkeys(128)
     #pk = (N, g)
     pk = (privkey.n, g(privkey.p, privkey.q))
     #sk = (e, d, v)
-    sk = (privkey.e, privkey.d, random.getrandbits(512))
+    sk = (privkey.e, privkey.d, random.getrandbits(128))
     return (pk, sk)
 
 def tag_block(pk, sk, m, i):
-    wi = sk[2] + (i << 512)
+    wi = sk[2] + (i << 128)
     t = pow( (sha(wi) * pow(pk[1], m, pk[0])), sk[1], pk[0])
     return (t, wi)
 
@@ -108,8 +108,8 @@ def generate_coefficients(k ,c):
 
 def get_data(file_name, challenge_block):
    # return file[challenge_block]
-    f = open("files/kung.jpg", 'rb')
-    file_size = os.stat("files/kung.jpg").st_size
+    f = open("files/somefile.txt", 'rb')
+    file_size = os.stat("files/somefile.txt").st_size
     #print("number of blocks = "+str(int(file_size / 1000)))
     f.seek(1000 * challenge_block)
     stuff = int.from_bytes(bytes(f.read(1000)), byteorder='little')
@@ -118,7 +118,7 @@ def get_data(file_name, challenge_block):
 
 def get_message(i):
     print("returning block "+str(i))
-    return get_data("kung.jpg", i)
+    return get_data("somefile.txt", i)
 
 #f is number of avaliable blocks
 def gen_proof(pk, f, chal, tags, data):
@@ -179,13 +179,13 @@ def check_proof(pk, sk, chal, V):
     curvy_t = pow(V[0], sk[0], pk[0])
     print("after")
     #generate challenge blocks
-    challenge_blocks = get_challenge_blocks(k1, c, get_num_blocks("kung.jpg"))
+    challenge_blocks = get_challenge_blocks(k1, c, get_num_blocks("somefile.txt"))
     
     #generate coefficients
     coefficients = generate_coefficients(k2, c)
     print("initial +"+str(curvy_t))
     for i in range(0, c):
-        wi = str(sk[2] + (challenge_blocks[i] << 512)).encode('utf-8')
+        wi = str(sk[2] + (challenge_blocks[i] << 128)).encode('utf-8')
         #print(wi)
         #print("///////////")
         h = hashlib.sha256()
@@ -206,44 +206,44 @@ def check_proof(pk, sk, chal, V):
         return False
 
 
-tags = []
-pk, sk = key_gen()
-#generate new challenge
-c = random.randint(0, get_num_blocks("kung.jpg")-1)
-k1 = random.randint(0, 1000)
-k2 = random.randint(0, 1000)
-ss = random.randint(0, 10)
+# tags = []
+# pk, sk = key_gen()
+# #generate new challenge
+# c = random.randint(0, get_num_blocks("kung.jpg")-1)
+# k1 = random.randint(0, 1000)
+# k2 = random.randint(0, 1000)
+# ss = random.randint(0, 10)
 
-c=6
-#k1 =2
-k2=4
-ss=4
-#print(sk)
-#on the client
-for i in range(0, get_num_blocks("kung.jpg")):
-    #print("tagging block "+str(i))
-    tag = tag_block(pk, sk, get_message(i), i)
-    ##print(tag)
-    tags.append(tag)
-
-chal = (c, k1, k2, pk[1] ** ss)
-#print(tags)
-print("here")
-print(c)
-challenge_blocks = get_challenge_blocks(k1, c, get_num_blocks("kung.jpg"))
-print(challenge_blocks)
-data = []
+# c=6
+# #k1 =2
+# k2=4
+# ss=4
+# #print(sk)
+# #on the client
 # for i in range(0, get_num_blocks("kung.jpg")):
-#     if i in challenge_blocks:
-#         data.append(get_message(i))
-for i in range(0, len(challenge_blocks)):
-    data.append(get_data("kung.jpg", challenge_blocks[i]))
-#print("e "+)
-t = time.time()
-proof = gen_proof(pk, get_num_blocks("kung.jpg"), chal, tags, data)
-print(time.time() -t)
-print("proof")
-#print(proof)
-chal = (c, k1, k2, ss)
-proof = (proof[0], proof[1])
-print(check_proof(pk, sk, chal, proof))
+#     #print("tagging block "+str(i))
+#     tag = tag_block(pk, sk, get_message(i), i)
+#     ##print(tag)
+#     tags.append(tag)
+
+# chal = (c, k1, k2, pk[1] ** ss)
+# #print(tags)
+# print("here")
+# print(c)
+# challenge_blocks = get_challenge_blocks(k1, c, get_num_blocks("kung.jpg"))
+# print(challenge_blocks)
+# data = []
+# # for i in range(0, get_num_blocks("kung.jpg")):
+# #     if i in challenge_blocks:
+# #         data.append(get_message(i))
+# for i in range(0, len(challenge_blocks)):
+#     data.append(get_data("kung.jpg", challenge_blocks[i]))
+# #print("e "+)
+# t = time.time()
+# proof = gen_proof(pk, get_num_blocks("kung.jpg"), chal, tags, data)
+# print(time.time() -t)
+# print("proof")
+# #print(proof)
+# chal = (c, k1, k2, ss)
+# proof = (proof[0], proof[1])
+# print(check_proof(pk, sk, chal, proof))

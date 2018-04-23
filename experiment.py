@@ -19,7 +19,7 @@ client_account = w3.eth.accounts[2]
 #Get the genesis contract
 genesis_contract = s.get_contract_instance(w3, s.genesis_address, "GenesisContract")
 
-print("Requesting storage for file "+str(file_name))
+print("Requesting storer for file "+str(file_name))
 
 #request storage
 new_storage_request = s.make_contract(w3, "RequestStorageContract")
@@ -28,7 +28,7 @@ receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 storage_request = s.get_contract_instance(w3, receipt['contractAddress'], "RequestStorageContract")
 
 print("Publicising available contract to mining pool")
-print("contract Address "+str(receipt['contractAddress']))
+print("Contract Address "+str(receipt['contractAddress']))
 genesis_contract.submitContract(receipt['contractAddress'], transact={'from':client_account})
 
 #wait for a miner to accept
@@ -46,8 +46,8 @@ print("Storer "+str(storer_id)+" accepted the contract!")
 
 #transfer file to miner
 ##TODO: is this worth doing?
-
-print("Generating keys")
+#time.sleep(5)
+#print("Generating keys")
 #generate keys
 pk, sk = pdp.key_gen()
 
@@ -64,7 +64,7 @@ f.flush()
 
 #request proofs regularly
 while True:
-    time.sleep(5)
+    #time.sleep(5)
     print("Requesting proof of storage")
 
     #generate new challenge
@@ -72,27 +72,28 @@ while True:
     k1 = random.randint(0, 1000)
     k2 = random.randint(0, 1000)
     ss = random.randint(0, 1000)
-    print("nino")
+    # print("nino")
 
-    print(c)
-    print(k1)
-    print(k2)
-    print(ss)
-    print(pk[0])
-    print(pk[1])
+    # print(c)
+    # print(k1)
+    # print(k2)
+    # print(ss)
+    # print(pk[0])
+    # print(pk[1])
     #generate new proof request contract + push to network
     new_storage_proof = s.make_contract(w3, "StorageProof")
     tx_hash = new_storage_proof.constructor(storerIn=storer_id, fileIdIn=file_name, cIn = c, k1In = k1, k2In = k2, gsIn =ss, NIn = pk[0], gIn=pk[1]).transact(transaction={'from': client_account})
-    print("hello")
+    #print("hello")
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    print("my")
+    #print("my")
     proof_request = s.get_contract_instance(w3, receipt['contractAddress'], "StorageProof")
-    print(proof_request.getChallenge())
+    print("Challenge = " + str(proof_request.getChallenge()))
 
     #pulicise storage proof
-    print("publicising new proof at "+receipt['contractAddress'])
+    print("Publicising new proof request at "+receipt['contractAddress'])
+    #time.sleep(7)
     storage_request.requestProof(receipt['contractAddress'], transact={'from': client_account})
-
+    #time.sleep(3)
     while True:
         print("Waiting for proof from"+str(storage_request.getStorer()))
         #print(proof_request.getProof())
@@ -101,13 +102,15 @@ while True:
             break
     proof_received = json.loads(proof_request.getProof().decode('utf-8'))
     print("Received proof")
-    print(proof_received)
+    #print(proof_received)
+    #time.sleep(6)
+    print("Proof Detected on Blockchain")
+    # if pdp.check_proof(pk, sk, (c, k1, k2, ss), proof_received):
+    #     print("TRUE TRUE TRUE")
+    # else:
+    #     print("FALSE FALSE FALSE")
 
-    if pdp.check_proof(pk, sk, (c, k1, k2, ss), proof_received):
-        print("TRUE TRUE TRUE")
-    else:
-        print("FALSE FALSE FALSE")
-
+    exit()
     assert(False)
 
 
