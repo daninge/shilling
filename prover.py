@@ -13,82 +13,17 @@ import sys
 sys.path.append('./posw')
 from posw.posw import *
 
-
-def prove (address, account):
-    print("Outsourcing proof")
-    #time.sleep(10)
-    # print("prove")
-    # print(address)
-    proof_request_contract = s.get_contract_instance(w3, address, "StorageProof")
-    c, k1, k2, ss, N, g  = proof_request_contract.getChallenge()
-    # print(c)
-    # print(k1)
-    # print(k2)
-    # print(ss)
-    # print(N)
-    # print(g)
-
-    #request outsourcing
-    new_outsource = s.make_contract(w3, "OutsourcingContract")
-    tx_hash = new_outsource.constructor(requestorIn=address, fileIdIn=59).transact(transaction={'from': account})
-    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    outsource_request = s.get_contract_instance(w3, receipt['contractAddress'], "OutsourcingContract")
-    print("requestor")
-    print(outsource_request.getRequestor())
-    #outsource_request.setRequestor(address, transact={'from' : account})
-    # while outsource_request.getRequestor() == None:
-    #     print(outsource_request.getRequestor())
-    #     print(receipt['contractAddress'])
-    #     time.sleep(2)
-
-    print("Proof has been outsourced")
-    while outsource_request.getProof() == b'':
-        time.sleep(1)
-
-    print("Proof detected")
-    exit()
-    to_return = []
-    proofbytes = str(json.dumps(to_return)).encode('utf-8')
-    return proofbytes #returns bytes
-
-    # file_id = proof_request_contract.getFileId()
-    # #challege_data = get_data(file_id, challenge)
-    # challenge_blocks = pdp.get_challenge_blocks(k1, c, pdp.get_num_blocks(file_id))
-    # print("challenge blocks")
-    # print(challenge_blocks)
-    # data = []
-
-    # for index in challenge_blocks:
-    #     data.append(pdp.get_data(file_id, index))
-
-    # print("data")
-    # print(data)
-    # #print(data)
-    # #if proofs should be outsourced
-    # if IS_OUTSOURCING_PROOFS:
-    #     print("is outsourcing proofs")
-    #     #do shit here
-    
-    # generate proof here
-    # print("PROOF")
-    # proof = pdp.gen_proof((N,g), pdp.get_num_blocks(file_id), (c, k1, k2,  (g **ss)), pdp.get_tags(60), data)
-    # proofbytes = str(json.dumps(proof)).encode('utf-8')
-    # return proofbytes
-    #print("generating a local proof")
-
-
-
 #####################################################################
 #Logic starts here
 
-#print('Raymond.')
+print('Initialising PoT')
 chi = verifier_init()
 G = prover_init(chi)
 challenge_gamma = verifier_challenge()
 tau = prover_challenge(chi, G, challenge_gamma)
-#print(verifier_check(chi, G.node[BinaryString(0, 0)]['label'], challenge_gamma, tau))
+print(verifier_check(chi, G.node[BinaryString(0, 0)]['label'], challenge_gamma, tau))
 
-storer_id = w3.eth.accounts[0]
+prover_id = w3.eth.accounts[5]
 
 #Get the genesis contract
 genesis_contract = s.get_contract_instance(w3, s.genesis_address, "GenesisContract")

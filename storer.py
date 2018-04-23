@@ -33,14 +33,7 @@ def prove (address, account):
     tx_hash = new_outsource.constructor(requestorIn=address, fileIdIn=59).transact(transaction={'from': account})
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     outsource_request = s.get_contract_instance(w3, receipt['contractAddress'], "OutsourcingContract")
-    print("requestor")
-    print(outsource_request.getRequestor())
-    #outsource_request.setRequestor(address, transact={'from' : account})
-    # while outsource_request.getRequestor() == None:
-    #     print(outsource_request.getRequestor())
-    #     print(receipt['contractAddress'])
-    #     time.sleep(2)
-
+    genesis_contract.submitOutsourcingContract(receipt['contractAddress'], transact={'from': account})
     print("Proof has been outsourced")
     while outsource_request.getProof() == b'':
         time.sleep(1)
