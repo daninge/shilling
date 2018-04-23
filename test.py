@@ -6,7 +6,7 @@ from posw.posw import *
 if __name__ == '__main__':
     print('Raymond.')
     chi = verifier_init()
-    phi, phi_P = prover_init(chi)
+    G = prover_init(chi)
     challenge_gamma = verifier_challenge()
-    prover_challenge()
-    verifier_check() 
+    tau = prover_challenge(chi, G, challenge_gamma)
+    print(verifier_check(chi, G.node[BinaryString(0, 0)]['label'], challenge_gamma, tau))
