@@ -86,21 +86,24 @@ def tag_block(pk, sk, m, i):
 def get_challenge_blocks(k, c, f):
     random.seed(k)
     challenge_blocks = []
+    print(c)
     for i in range(0, c):
-        something = random.randrange(f)
+        print(challenge_blocks)
+        something = random.randrange(f-1)
         while something in challenge_blocks:
-            something = random.randrange(f)
+            something = random.randrange(f-1)
         challenge_blocks.append(something)  
-    #return challenge_blocks
-    return [0, 2]
+    print("challenge blocks = "+str(challenge_blocks))
+    return challenge_blocks
+    #return [0, 2]
 
 def generate_coefficients(k ,c):
     random.seed(k)
     coefficients = []
     for i in range(0, c):
-        coefficients.append(random.randint(0, 2000))
-    #return coefficients
-    return [5, 10]
+        coefficients.append(random.randint(0, 100))
+    return coefficients
+    #return [5, 10]
 
 def get_data(file_name, challenge_block):
    # return file[challenge_block]
@@ -204,30 +207,40 @@ def check_proof(pk, sk, chal, V):
 
 tags = []
 pk, sk = key_gen()
+#generate new challenge
+c = random.randint(0, get_num_blocks("kung.jpg")-1)
+k1 = random.randint(0, 1000)
+k2 = random.randint(0, 1000)
+ss = random.randint(0, 10)
 
+c=2
+#k1 =2
+k2=4
+ss=4
 #print(sk)
 #on the client
 for i in range(0, get_num_blocks("kung.jpg")):
-    print("tagging block "+str(i))
+    #print("tagging block "+str(i))
     tag = tag_block(pk, sk, get_message(i), i)
-    print(tag)
+    ##print(tag)
     tags.append(tag)
 
-chal = (2, 2, 4, pk[1] ** 4)
+chal = (c, k1, k2, pk[1] ** ss)
 #print(tags)
 print("here")
-
-challenge_blocks = get_challenge_blocks(2, 2, get_num_blocks("kung.jpg"))
+print(c)
+challenge_blocks = get_challenge_blocks(k1, c, get_num_blocks("kung.jpg"))
 print(challenge_blocks)
 data = []
-for i in range(0, get_num_blocks("kung.jpg")):
-    if i in challenge_blocks:
-        data.append(get_message(i))
-
+# for i in range(0, get_num_blocks("kung.jpg")):
+#     if i in challenge_blocks:
+#         data.append(get_message(i))
+for i in range(0, len(challenge_blocks)):
+    data.append(get_data("kung.jpg", challenge_blocks[i]))
 #print("e "+)
 proof = gen_proof(pk, get_num_blocks("kung.jpg"), chal, tags, data)
 print("proof")
-print(proof)
-chal = (2, 2, 4, 4)
+#print(proof)
+chal = (c, k1, k2, ss)
 proof = (proof[0], proof[1])
 print(check_proof(pk, sk, chal, proof))
