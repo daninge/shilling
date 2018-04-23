@@ -6,6 +6,7 @@ import hashlib
 from fractions import gcd
 from decimal import *
 import os
+import time
 # pprime = None
 # p = 2 * pprime + 1
 # qprime = None
@@ -213,7 +214,7 @@ k1 = random.randint(0, 1000)
 k2 = random.randint(0, 1000)
 ss = random.randint(0, 10)
 
-c=2
+c=6
 #k1 =2
 k2=4
 ss=4
@@ -238,7 +239,9 @@ data = []
 for i in range(0, len(challenge_blocks)):
     data.append(get_data("kung.jpg", challenge_blocks[i]))
 #print("e "+)
+t = time.time()
 proof = gen_proof(pk, get_num_blocks("kung.jpg"), chal, tags, data)
+print(time.time() -t)
 print("proof")
 #print(proof)
 chal = (c, k1, k2, ss)
