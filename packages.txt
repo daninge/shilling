@@ -12,6 +12,7 @@ eth-utils==1.0.2
 hexbytes==0.1.0
 idna==2.6
 lru-dict==1.1.6
+networkx==2.1 
 pip==10.0.0
 py-solc==2.1.0
 pycryptodome==3.6.1
