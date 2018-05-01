@@ -49,9 +49,9 @@ def verify_proof(proof, data, merkle_root):
     return mt.validate_proof(proof, h.hexdigest() ,merkle_root)
 
 
-if __name__ == "__main__":
-    proof = generate_proof(4, "somefile.txt")
-    print(verify_proof(proof[2], proof[1], proof[0]))
+# if __name__ == "__main__":
+#     proof = generate_proof(4, "somefile.txt")
+#     print(verify_proof(proof[2], proof[1], proof[0]))
 
 
 

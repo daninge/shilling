@@ -4,6 +4,7 @@ import setup as s
 #import pdp
 import json
 import os
+import siaproof as sia
 
 w3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
 
@@ -13,21 +14,25 @@ import sys
 sys.path.append('./posw')
 from posw.posw import *
 
-def build_proof_chain(initial_challenge):
-    chi = verifier_init()
-    G = prover_init(chi)
-    challenge_gamma = verifier_challenge()
-    tau = prover_challenge(chi, G, challenge_gamma)
-    print(verifier_check(chi, G.node[BinaryString(0, 0)]['label'], challenge_gamma, tau))
+def build_proof_chain(file_name, initial_challenge, chain_length):
+    proofs = []
+    chains = []
+    chi = initial_challenge
+    for i in range(0, chain_length):
+        challenge_block = chi % sia.get_num_blocks(file_name)
+        proofs += [(challenge_block, sia.generate_proof(challenge_block, file_name))]
+        G = compute_posw(chi)
+        chains += [G]
+        chi = int(G.node[BinaryString(0, 0)]['label'])
+    print(int(chi))
+    print(proofs)
+    print(chains)
+
+
+
+build_proof_chain("somefile.txt", 5, 2)
 #####################################################################
 #Logic starts here
-
-print('Initialising PoT')
-chi = verifier_init()
-G = prover_init(chi)
-challenge_gamma = verifier_challenge()
-tau = prover_challenge(chi, G, challenge_gamma)
-print(verifier_check(chi, G.node[BinaryString(0, 0)]['label'], challenge_gamma, tau))
 
 prover_id = w3.eth.accounts[5]
 
