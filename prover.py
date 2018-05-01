@@ -35,6 +35,8 @@ def build_proof_chain(file_name, initial_challenge, chain_length):
 
 def verify_proof_chain(merkle_root, proofs, chains, initial_challenge):
     for i in range(0, len(proofs)):
+        print(proofs[i][0])
+    for i in range(0, len(proofs)):
         if not sia.verify_proof(proofs[i][2], proofs[i][1], proofs[i][0]):
             print("sia failed")
             return False
