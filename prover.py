@@ -13,6 +13,8 @@ IS_OUTSOURCING_PROOFS = False
 import sys
 sys.path.append('./posw')
 from posw.posw import *
+from util import sha256H
+N = 10
 
 def build_proof_chain(file_name, initial_challenge, chain_length):
     proofs = []
@@ -20,17 +22,36 @@ def build_proof_chain(file_name, initial_challenge, chain_length):
     chi = initial_challenge
     for i in range(0, chain_length):
         challenge_block = chi % sia.get_num_blocks(file_name)
-        proofs += [(challenge_block, sia.generate_proof(challenge_block, file_name))]
-        G = compute_posw(chi)
+        p = sia.generate_proof(challenge_block, file_name)
+        proofs += [p]
+        chi = str(p)
+        G = compute_posw(chi, n=N)
         chains += [G]
         chi = int(G.node[BinaryString(0, 0)]['label'])
     print(int(chi))
     print(proofs)
     print(chains)
+    return (proofs, chains)
+
+def verify_proof_chain(merkle_root, proofs, chains, initial_challenge):
+    for i in range(0, len(proofs)):
+        if not sia.verify_proof(proofs[i][2], proofs[i][1], proofs[i][0]):
+            print("sia failed")
+            return False
+        chi = str(proofs[i])
+        gamma = opening_challenge()
+        tau = compute_open(chi, chains[i], gamma)
+        if not compute_verify(chi, chains[i].node[BinaryString(0, 0)]['label'], gamma, tau):
+            print("compute verify failed")
+            return False
+        chi = int(chains[i].node[BinaryString(0, 0)]['label'])
+    return True
+        
 
 
 
-build_proof_chain("somefile.txt", 5, 2)
+proofs, chains = build_proof_chain("somefile.txt", 5, 5)
+print(verify_proof_chain(4,proofs, chains, 5))
 #####################################################################
 #Logic starts here
 
