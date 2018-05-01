@@ -32,6 +32,8 @@ print("Contract Address "+str(receipt['contractAddress']))
 genesis_contract.submitContract(receipt['contractAddress'], transact={'from':client_account})
 
 #wait for a miner to accept
+print("Waiting for a storer to accept the contract")
+
 while storage_request.getStorer() == None:
     # print(storage_request.getFileId())
     # print(storage_request.getStorer())
@@ -94,8 +96,8 @@ while True:
     #time.sleep(7)
     storage_request.requestProof(receipt['contractAddress'], transact={'from': client_account})
     #time.sleep(3)
+    print("Waiting for proof from"+str(storage_request.getStorer()))
     while True:
-        print("Waiting for proof from"+str(storage_request.getStorer()))
         #print(proof_request.getProof())
         time.sleep(1)
         if proof_request.getProof() != b'':

@@ -9,7 +9,7 @@ contract GenesisContract {
         //         available_contracts[i] =  a;
         //     }
         // }
-        available_contract = a;
+        outsourcing_contract = a;
     }
 
     function getOutsourcingContract() public returns (address) {
@@ -20,8 +20,8 @@ contract GenesisContract {
         //         return to_return;
         //     }
         // }
-        address to_return = available_contract;
-        available_contract = address(0);
+        address to_return = outsourcing_contract;
+        outsourcing_contract = address(0);
         return to_return;
     }
 
