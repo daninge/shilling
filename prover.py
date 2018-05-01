@@ -28,9 +28,9 @@ def build_proof_chain(file_name, initial_challenge, chain_length):
         G = compute_posw(chi, n=N)
         chains += [G]
         chi = int(G.node[BinaryString(0, 0)]['label'])
-    print(int(chi))
-    print(proofs)
-    print(chains)
+    # print(int(chi))
+    # print(proofs)
+    # print(chains)
     return (proofs, chains)
 
 def verify_proof_chain(merkle_root, proofs, chains, initial_challenge):
@@ -39,6 +39,7 @@ def verify_proof_chain(merkle_root, proofs, chains, initial_challenge):
             print("sia failed")
             return False
         chi = str(proofs[i])
+        print(chi)
         gamma = opening_challenge()
         tau = compute_open(chi, chains[i], gamma)
         if not compute_verify(chi, chains[i].node[BinaryString(0, 0)]['label'], gamma, tau):
