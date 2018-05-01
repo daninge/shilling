@@ -13,6 +13,12 @@ import sys
 sys.path.append('./posw')
 from posw.posw import *
 
+def build_proof_chain(initial_challenge):
+    chi = verifier_init()
+    G = prover_init(chi)
+    challenge_gamma = verifier_challenge()
+    tau = prover_challenge(chi, G, challenge_gamma)
+    print(verifier_check(chi, G.node[BinaryString(0, 0)]['label'], challenge_gamma, tau))
 #####################################################################
 #Logic starts here
 
@@ -52,5 +58,6 @@ current_contract.setProvider(prover_id, transact={'from': prover_id})
 exit()
 while True:
     print(current_contract.getInitialChallenge())
+
 
 
