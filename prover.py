@@ -28,9 +28,8 @@ def build_proof_chain(file_name, initial_challenge, chain_length):
         G = compute_posw(chi, n=N)
         chains += [G]
         chi = int(G.node[BinaryString(0, 0)]['label'])
-    # print(int(chi))
-    # print(proofs)
-    # print(chains)
+    block_filter = w3.eth.filter('latest')
+    print(w3.eth.getBlock('latest')['number'], w3.eth.getBlock('latest')['hash'])
     return (proofs, chains)
 
 def verify_proof_chain(merkle_root, proofs, chains, initial_challenge):
@@ -40,6 +39,7 @@ def verify_proof_chain(merkle_root, proofs, chains, initial_challenge):
             return False
         chi = str(proofs[i])
         gamma = opening_challenge()
+        #print(gamma)
         tau = compute_open(chi, chains[i], gamma)
         if not compute_verify(chi, chains[i].node[BinaryString(0, 0)]['label'], gamma, tau):
             print("compute verify failed")
@@ -50,9 +50,9 @@ def verify_proof_chain(merkle_root, proofs, chains, initial_challenge):
 
 
 
-proofs, chains = build_proof_chain("somefile.txt", 5, 5)
-print(verify_proof_chain(4,proofs, chains, 5))
-exit()
+# proofs, chains = build_proof_chain("somefile.txt", 5, 5)
+# print(verify_proof_chain(4,proofs, chains, 5))
+# exit()
 #####################################################################
 #Logic starts here
 
@@ -63,13 +63,6 @@ genesis_contract = s.get_contract_instance(w3, s.genesis_address, "GenesisContra
 
 print("Waiting for a contract:")
 
-#print(genesis_contract.getAvailableContracts())
-
-# print(s.genesis_address)
-
-# print(genesis_contract.getContract())
-#genesis_contract.submitContract(storer_id,transact={'from': storer_id})
-#print(genesis_contract.getContract())
 contract_address = genesis_contract.getOutsourcingContract()
 while contract_address == None:
     #print(genesis_contract.getOutsourcingContract())
@@ -82,9 +75,7 @@ print("Accepting outsourcing contract at address "+str(contract_address))
 current_contract = s.get_contract_instance(w3, contract_address, "OutsourcingContract")
 current_contract.setProvider(prover_id, transact={'from': prover_id})
 
-exit()
-while True:
-    print(current_contract.getInitialChallenge())
+print(build_proof_chain("somefile.txt", current_contract.getInitialChallenge(), 3))
 
 
 

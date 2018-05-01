@@ -46,8 +46,6 @@ def generate_proof(challenge, file_name):
     while not mt.is_ready:
         print("Waiting")
         time.sleep(1)
-    
-    #print("merkle root "+mt.get_merkle_root())
 
     return (mt.get_merkle_root(), get_data(file_name, challenge), mt.get_proof(challenge))
 

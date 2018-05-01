@@ -41,7 +41,7 @@ def prove (address, account):
 
     prover_id = outsource_request.getProvider()
     print("Prover at "+str(prover_id)+" accepted contract")
-    
+
     exit()
     to_return = []
     proofbytes = str(json.dumps(to_return)).encode('utf-8')
@@ -78,10 +78,10 @@ def prove (address, account):
 #Logic starts here
 
 #print('Raymond.')
-chi = verifier_init()
-G = prover_init(chi)
-challenge_gamma = verifier_challenge()
-tau = prover_challenge(chi, G, challenge_gamma)
+# chi = verifier_init()
+# G = prover_init(chi)
+# challenge_gamma = verifier_challenge()
+# tau = prover_challenge(chi, G, challenge_gamma)
 #print(verifier_check(chi, G.node[BinaryString(0, 0)]['label'], challenge_gamma, tau))
 
 storer_id = w3.eth.accounts[0]
