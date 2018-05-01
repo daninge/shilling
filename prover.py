@@ -26,7 +26,9 @@ def build_proof_chain(file_name, initial_challenge, chain_length):
         proofs += [p]
         chi = str(p)
         G = compute_posw(chi, n=N)
-        chains += [G]
+        gamma = opening_challenge(secure=False, s=420)
+        chain = compute_open(chi, G, gamma)
+        chains += [(G.node[BinaryString(0, 0)]['label'], chain)]
         chi = int(G.node[BinaryString(0, 0)]['label'])
     block_filter = w3.eth.filter('latest')
     print(w3.eth.getBlock('latest')['number'], w3.eth.getBlock('latest')['hash'])
@@ -38,21 +40,19 @@ def verify_proof_chain(merkle_root, proofs, chains, initial_challenge):
             print("sia failed")
             return False
         chi = str(proofs[i])
-        gamma = opening_challenge()
-        #print(gamma)
-        tau = compute_open(chi, chains[i], gamma)
-        if not compute_verify(chi, chains[i].node[BinaryString(0, 0)]['label'], gamma, tau):
+        gamma = opening_challenge(secure=False, s=420)
+        if not compute_verify(chi, chains[i][0], gamma, chains[i][1]):
             print("compute verify failed")
             return False
-        chi = int(chains[i].node[BinaryString(0, 0)]['label'])
+        chi = int(chains[i][0])
     return True
         
 
 
 
-# proofs, chains = build_proof_chain("somefile.txt", 5, 5)
-# print(verify_proof_chain(4,proofs, chains, 5))
-# exit()
+proofs, chains = build_proof_chain("somefile.txt", 5, 5)
+print(verify_proof_chain(4,proofs, chains, 5))
+exit()
 #####################################################################
 #Logic starts here
 
