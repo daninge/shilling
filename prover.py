@@ -5,6 +5,7 @@ import setup as s
 import json
 import os
 import siaproof as sia
+import pickle
 
 w3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
 
@@ -26,8 +27,9 @@ def build_proof_chain(file_name, initial_challenge, chain_length):
         proofs += [p]
         chi = str(p)
         G = compute_posw(chi, n=N)
-        gamma = opening_challenge(secure=False, s=420)
+        gamma = opening_challenge(secure=False, s=420, t=5)
         chain = compute_open(chi, G, gamma)
+        print(len(chain) * (len(chain[0]) * 32))
         chains += [(G.node[BinaryString(0, 0)]['label'], chain)]
         chi = int(G.node[BinaryString(0, 0)]['label'])
     block_filter = w3.eth.filter('latest')
@@ -40,17 +42,14 @@ def verify_proof_chain(merkle_root, proofs, chains, initial_challenge):
             print("sia failed")
             return False
         chi = str(proofs[i])
-        gamma = opening_challenge(secure=False, s=420)
+        gamma = opening_challenge(secure=False, s=420, t=5)
         if not compute_verify(chi, chains[i][0], gamma, chains[i][1]):
             print("compute verify failed")
             return False
         chi = int(chains[i][0])
     return True
-        
 
-
-
-proofs, chains = build_proof_chain("somefile.txt", 5, 5)
+proofs, chains = build_proof_chain("somefile.txt", 5,5)
 print(verify_proof_chain(4,proofs, chains, 5))
 exit()
 #####################################################################
