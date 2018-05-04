@@ -25,3 +25,4 @@ genesis_address.txt
 # Ignore txt files
 *.txt
 *.log
+.vscode

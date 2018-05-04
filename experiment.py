@@ -82,15 +82,13 @@ while True:
             break
     proof_received = proof_request.getProof()
     reloaded = pickle.loads(proof_received)
-    print(reloaded)
+    #print(reloaded)
     print("Proof Detected on Blockchain")
     print("Verifying Proof")
     if verify_proof_chain(None, reloaded[0], reloaded[1], proof_request.getChallenge()):
         print("Accept")
     else:
         print("Reject")
-
-    #TODO: Verify proof here
     exit()
 
 

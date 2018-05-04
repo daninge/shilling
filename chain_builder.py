@@ -27,7 +27,14 @@ def build_proof_chain(file_name, initial_challenge, chain_length, t=None, tp=5, 
         challenge_block = chi % sia.get_num_blocks(file_name)
         p = sia.generate_proof(challenge_block, file_name)
         proofs += [p]
-        chi = str(p)
+        
+        seed_string = ""
+        #generate seed from all previous items in chain
+        for j in range(0, len(proofs)):
+            seed_string = seed_string + str(proofs[j])
+            print(str(proofs[j]))
+        chi = seed_string
+
         G = compute_posw(chi, n=n)
         gamma = opening_challenge(secure=False, s=420, t=tp)
         chain = compute_open(chi, G, gamma)
@@ -42,7 +49,11 @@ def verify_proof_chain(merkle_root, proofs, chains, initial_challenge, t=None, t
         if not sia.verify_proof(proofs[i][2], proofs[i][1], proofs[i][0]):
             print("sia failed")
             return False
-        chi = str(proofs[i])
+        seed_string = ""
+        for j in range(0, i+1):
+            seed_string = seed_string + str(proofs[j])
+            print(str(proofs[j]))
+        chi = seed_string
         gamma = opening_challenge(secure=False, s=420, t=tp)
         if not compute_verify(chi, chains[i][0], gamma, chains[i][1]):
             print("compute verify failed")
