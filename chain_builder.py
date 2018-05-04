@@ -32,7 +32,7 @@ def build_proof_chain(file_name, initial_challenge, chain_length, t=None, tp=5, 
         #generate seed from all previous items in chain
         for j in range(0, len(proofs)):
             seed_string = seed_string + str(proofs[j])
-            print(str(proofs[j]))
+            #print(str(proofs[j]))
         chi = seed_string
 
         G = compute_posw(chi, n=n)
@@ -52,7 +52,7 @@ def verify_proof_chain(merkle_root, proofs, chains, initial_challenge, t=None, t
         seed_string = ""
         for j in range(0, i+1):
             seed_string = seed_string + str(proofs[j])
-            print(str(proofs[j]))
+            #print(str(proofs[j]))
         chi = seed_string
         gamma = opening_challenge(secure=False, s=420, t=tp)
         if not compute_verify(chi, chains[i][0], gamma, chains[i][1]):
