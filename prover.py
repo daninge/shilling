@@ -48,19 +48,12 @@ def verify_proof_chain(merkle_root, proofs, chains, initial_challenge):
     return True
         
 
-
-
-proofs, chains = build_proof_chain("somefile.txt", 5, 5)
-print(verify_proof_chain(4,proofs, chains, 5))
-exit()
-
-
-
-
-if __name__ == '__main__':
-    #####################################################################
-    #Logic starts here
-
+if __name__ == '__main__':       
+    proofs, chains = build_proof_chain("somefile.txt", 5, 5)
+    print(verify_proof_chain(4,proofs, chains, 5))
+    exit()
+    
+    # Logic for blockchain
     prover_id = w3.eth.accounts[5]
 
     #Get the genesis contract
