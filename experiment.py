@@ -55,14 +55,14 @@ pk, sk = pdp.key_gen()
 
 tags = []
 
-#generate tags
-for i in range(0, pdp.get_num_blocks(file_name)):
-    tags.append(pdp.tag_block(pk, sk, pdp.get_data(file_name, i), i))
+# #generate tags
+# for i in range(0, pdp.get_num_blocks(file_name)):
+#     tags.append(pdp.tag_block(pk, sk, pdp.get_data(file_name, i), i))
 
-#print(tags)
-f = open(str(file_name)+"-tags.txt", 'w')
-f.write(json.dumps(tags))
-f.flush()
+# #print(tags)
+# f = open(str(file_name)+"-tags.txt", 'w')
+# f.write(json.dumps(tags))
+# f.flush()
 
 #request proofs regularly
 while True:
@@ -70,24 +70,12 @@ while True:
     print("Requesting proof of storage")
 
     #generate new challenge
-    c = random.randint(0, pdp.get_num_blocks(file_name))
-    k1 = random.randint(0, 1000)
-    k2 = random.randint(0, 1000)
-    ss = random.randint(0, 1000)
-    # print("nino")
+    c = random.randint(0, 10) #TODO: this should be in range of num blocks in file
 
-    # print(c)
-    # print(k1)
-    # print(k2)
-    # print(ss)
-    # print(pk[0])
-    # print(pk[1])
     #generate new proof request contract + push to network
     new_storage_proof = s.make_contract(w3, "StorageProof")
-    tx_hash = new_storage_proof.constructor(storerIn=storer_id, fileIdIn=file_name, cIn = c, k1In = k1, k2In = k2, gsIn =ss, NIn = pk[0], gIn=pk[1]).transact(transaction={'from': client_account})
-    #print("hello")
+    tx_hash = new_storage_proof.constructor(storage_request.getRequestor(), storage_request.getStorer(), "somefile.txt", c).transact(transaction={'from': client_account})
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    #print("my")
     proof_request = s.get_contract_instance(w3, receipt['contractAddress'], "StorageProof")
     print("Challenge = " + str(proof_request.getChallenge()))
 
@@ -103,17 +91,10 @@ while True:
         if proof_request.getProof() != b'':
             break
     proof_received = json.loads(proof_request.getProof().decode('utf-8'))
-    print("Received proof")
-    #print(proof_received)
-    #time.sleep(6)
     print("Proof Detected on Blockchain")
-    # if pdp.check_proof(pk, sk, (c, k1, k2, ss), proof_received):
-    #     print("TRUE TRUE TRUE")
-    # else:
-    #     print("FALSE FALSE FALSE")
 
+    #TODO: Verify proof here
     exit()
-    assert(False)
 
 
 

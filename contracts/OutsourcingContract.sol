@@ -4,42 +4,32 @@ contract OutsourcingContract {
     address public requestor;
     address public provider;
     uint public fileId;
-    uint initialChallenge;
+    address public proofAddress;
 
-    bytes proof;
-
-    function OutsourcingContract(address requestorIn, uint fileIdIn, uint challengeIn) public {
+    function OutsourcingContract(address requestorIn, uint fileIdIn, address proofAddressIn) public {
         requestor = requestorIn;
         fileId = fileIdIn;
-        initialChallenge = challengeIn;
+        proofAddress = proofAddressIn;
     }
     
     function setProvider(address pIn) public {
         provider = pIn;
     }
 
-    function getProvider() public returns (address) {
+    function getProvider() public view returns (address) {
         return provider;
-    }
-
-    function getInitialChallenge() public view returns (uint) {
-        return initialChallenge;
     }
 
     function setRequestor(address rin) public {
         requestor = rin;
     }
 
-    function requestProof(bytes storageProof) public {
-        proof = storageProof;
-    }
-
     function getRequestor() public view returns (address) {
         return requestor;
     }
-    
-    function getProof() public view returns (bytes) {
-        return proof;
+
+    function getProofAddress() public view returns (address) {
+        return proofAddress;
     }
 
     function getFileId() public view returns(uint) {
