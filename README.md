@@ -4,6 +4,23 @@ A decentralised file storage system for computationally limited devices. This wa
 
 ## Usage
 
+First, start up Truffle Ganache, and run
+```
+python3 setup_environment.py
+```
+Then, open three terminal windows. Run 
+```
+python3 client.py
+```
+in one of them, run
+```
+python3 storer.py
+```
+in another, and run
+```
+python3 prover.py
+```
+in the last one.
 
 ## Installation
 We rely on a submodule for the implementation of 
@@ -34,7 +51,7 @@ To install the dependencies, run
 ```
 brew tap ethereum/ethereum
 brew install solidity
-pip3 install -r packages.txt
+pip3 install -r requirements.txt
 ```
 Other than Python libraries, we also require Truffle Ganache, which can be downloaded [here](http://truffleframework.com/ganache/).
 
