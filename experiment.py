@@ -2,12 +2,19 @@ from web3 import Web3, HTTPProvider
 w3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
 #print(w3.eth.blockNumber)
 
+import sys
+sys.path.append('./posw')
+from posw.posw import *
+from posw.balloon import *
+from util import sha256H
+from chain_builder import *
+
 import setup as s
 import time
 import random
 import pdp
 import json
-
+import pickle
 ###################
 #Client logic below here
 
@@ -48,21 +55,6 @@ print("Storer "+str(storer_id)+" accepted the contract!")
 
 #transfer file to miner
 ##TODO: is this worth doing?
-#time.sleep(5)
-#print("Generating keys")
-#generate keys
-pk, sk = pdp.key_gen()
-
-tags = []
-
-# #generate tags
-# for i in range(0, pdp.get_num_blocks(file_name)):
-#     tags.append(pdp.tag_block(pk, sk, pdp.get_data(file_name, i), i))
-
-# #print(tags)
-# f = open(str(file_name)+"-tags.txt", 'w')
-# f.write(json.dumps(tags))
-# f.flush()
 
 #request proofs regularly
 while True:
@@ -74,24 +66,29 @@ while True:
 
     #generate new proof request contract + push to network
     new_storage_proof = s.make_contract(w3, "StorageProof")
-    tx_hash = new_storage_proof.constructor(storage_request.getRequestor(), storage_request.getStorer(), "somefile.txt", c).transact(transaction={'from': client_account})
+    tx_hash = new_storage_proof.constructor(storage_request.getRequestor(), storage_request.getStorer(), 59, c).transact(transaction={'from': client_account})
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     proof_request = s.get_contract_instance(w3, receipt['contractAddress'], "StorageProof")
     print("Challenge = " + str(proof_request.getChallenge()))
 
     #pulicise storage proof
     print("Publicising new proof request at "+receipt['contractAddress'])
-    #time.sleep(7)
     storage_request.requestProof(receipt['contractAddress'], transact={'from': client_account})
-    #time.sleep(3)
     print("Waiting for proof from"+str(storage_request.getStorer()))
     while True:
         #print(proof_request.getProof())
         time.sleep(1)
         if proof_request.getProof() != b'':
             break
-    proof_received = json.loads(proof_request.getProof().decode('utf-8'))
+    proof_received = proof_request.getProof()
+    reloaded = pickle.loads(proof_received)
+    print(reloaded)
     print("Proof Detected on Blockchain")
+    print("Verifying Proof")
+    if verify_proof_chain(None, reloaded[0], reloaded[1], proof_request.getChallenge()):
+        print("Accept")
+    else:
+        print("Reject")
 
     #TODO: Verify proof here
     exit()

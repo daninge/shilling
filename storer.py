@@ -75,5 +75,6 @@ while True:
     if len(proof_request_list) > num_proofs_so_far:
         print("Proof requested at address "+str(num_proofs_so_far))
         assert(prove(proof_request_list[num_proofs_so_far], storer_id))
+        exit()
 
 
