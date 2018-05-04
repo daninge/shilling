@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     address_of_storage_proof = current_contract.getProofAddress()
     storage_proof = s.get_contract_instance(w3, address_of_storage_proof, "StorageProof")
-    proof_chain = build_proof_chain("somefile.txt", storage_proof.getChallenge(), 3)
+    proof_chain = build_proof_chain(str(storage_proof.getFileId())+".txt", storage_proof.getChallenge(), 3)
     
     
     storage_proof.submitProof(pickle.dumps(proof_chain), transact={'from': prover_id, 'gas':2000000000})

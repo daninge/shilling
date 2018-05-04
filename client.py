@@ -18,12 +18,13 @@ import pickle
 ###################
 #Client logic below here
 
-file_id = sys.argv[-1]
+file_id = int(sys.argv[-1])
 
 try:
     f = open("files/"+str(file_id)+".txt", 'r')
 except:
     print("No such file")
+    print("Please ensure that "+"files/"+str(file_id)+".txt exists")
     exit()
 
 #client_account
@@ -32,11 +33,11 @@ client_account = w3.eth.accounts[2]
 #Get the genesis contract
 genesis_contract = s.get_contract_instance(w3, s.genesis_address, "GenesisContract")
 
-print("Requesting storer for file "+str(file_name))
+print("Requesting storer for file "+str(file_id))
 
 #request storage
 new_storage_request = s.make_contract(w3, "RequestStorageContract")
-tx_hash = new_storage_request.constructor(fileIdIn=file_name, requestorIn=client_account).transact(transaction={'from': client_account})
+tx_hash = new_storage_request.constructor(fileIdIn=file_id, requestorIn=client_account).transact(transaction={'from': client_account})
 receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 storage_request = s.get_contract_instance(w3, receipt['contractAddress'], "RequestStorageContract")
 
@@ -72,7 +73,7 @@ while True:
 
     #generate new proof request contract + push to network
     new_storage_proof = s.make_contract(w3, "StorageProof")
-    tx_hash = new_storage_proof.constructor(storage_request.getRequestor(), storage_request.getStorer(), 59, c).transact(transaction={'from': client_account})
+    tx_hash = new_storage_proof.constructor(storage_request.getRequestor(), storage_request.getStorer(), file_id, c).transact(transaction={'from': client_account})
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     proof_request = s.get_contract_instance(w3, receipt['contractAddress'], "StorageProof")
     print("Challenge = " + str(proof_request.getChallenge()))
