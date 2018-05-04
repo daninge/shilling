@@ -57,12 +57,4 @@ def verify_proof(proof, data, merkle_root):
     return mt.validate_proof(proof, h.hexdigest() ,merkle_root)
 
 
-# if __name__ == "__main__":
-# for i in range(0, 3):
-#     proof = generate_proof(4, "somefile.txt")
-#     print(verify_proof(proof[2], proof[1], proof[0]))
-#     #get_merkle_root("somefile.txt")
-#     #get_data("somefile.txt", 6)
-
-
 

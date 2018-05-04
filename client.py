@@ -1,6 +1,5 @@
 from web3 import Web3, HTTPProvider
 w3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
-#print(w3.eth.blockNumber)
 
 import sys
 sys.path.append('./posw')
@@ -49,9 +48,6 @@ genesis_contract.submitContract(receipt['contractAddress'], transact={'from':cli
 print("Waiting for a storer to accept the contract")
 
 while storage_request.getStorer() == None:
-    # print(storage_request.getFileId())
-    # print(storage_request.getStorer())
-    # print(storage_request.getRequestor())
     print("Waiting for a storer to accept the contract")
     time.sleep(2)
 
@@ -60,12 +56,8 @@ storer_id = storage_request.getStorer()
 
 print("Storer "+str(storer_id)+" accepted the contract!")
 
-#transfer file to miner
-##TODO: is this worth doing?
-
 #request proofs regularly
 while True:
-    #time.sleep(5)
     print("Requesting proof of storage")
 
     #generate new challenge
@@ -83,13 +75,11 @@ while True:
     storage_request.requestProof(receipt['contractAddress'], transact={'from': client_account})
     print("Waiting for proof from"+str(storage_request.getStorer()))
     while True:
-        #print(proof_request.getProof())
         time.sleep(1)
         if proof_request.getProof() != b'':
             break
     proof_received = proof_request.getProof()
     reloaded = pickle.loads(proof_received)
-    #print(reloaded)
     print("Proof Detected on Blockchain")
     print("Verifying Proof")
     if verify_proof_chain(None, reloaded[0], reloaded[1], proof_request.getChallenge()):

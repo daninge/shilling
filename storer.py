@@ -1,7 +1,6 @@
 from web3 import Web3, HTTPProvider
 import time
 import setup as s
-#import pdp
 import json
 import os
 
