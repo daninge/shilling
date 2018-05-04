@@ -69,7 +69,7 @@ while True:
     print("Requesting proof of storage")
 
     #generate new challenge
-    c = random.randint(0, 10) #TODO: this should be in range of num blocks in file
+    c = secrets.randbelow(sia.get_num_blocks(str(file_id)+".txt"))
 
     #generate new proof request contract + push to network
     new_storage_proof = s.make_contract(w3, "StorageProof")

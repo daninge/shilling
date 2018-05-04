@@ -62,6 +62,7 @@ def verify_proof_chain(merkle_root, proofs, chains, initial_challenge, t=None, t
     return True
 
 
+
 if __name__ == '__main__':
     proofs, chains = build_proof_chain("somefile.txt", 5,5)
     #print(chains)
