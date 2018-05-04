@@ -4,6 +4,7 @@ w3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
 
 import sys
 sys.path.append('./posw')
+
 from posw.posw import *
 from posw.balloon import *
 from util import sha256H
@@ -17,7 +18,13 @@ import pickle
 ###################
 #Client logic below here
 
-file_name = 59
+file_id = sys.argv[-1]
+
+try:
+    f = open("files/"+str(file_id)+".txt", 'r')
+except:
+    print("No such file")
+    exit()
 
 #client_account
 client_account = w3.eth.accounts[2]
