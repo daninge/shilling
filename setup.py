@@ -1,6 +1,10 @@
 import os
 from solc import compile_source
 from web3.contract import ConciseContract
+import sys
+sys.path.append('./posw')
+from posw.posw import *
+import pickle
 
 path = "contracts/"
 

@@ -3,14 +3,11 @@ import time
 import setup as s
 import json
 import os
-
+import pickle
+from chain_builder import *
 w3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
 
 IS_OUTSOURCING_PROOFS = False
-
-import sys
-sys.path.append('./posw')
-from posw.posw import *
 
 
 def prove (address, account):
@@ -34,9 +31,19 @@ def prove (address, account):
     prover_id = outsource_request.getProvider()
     print("Prover at "+str(prover_id)+" accepted contract")
 
-    #TODO: verify proof here
+    while proof_request_contract.getProof() == b'':
+        time.sleep(1)
 
-    return True
+    proof_received = proof_request_contract.getProof()
+    reloaded = pickle.loads(proof_received)
+    print("Proof Detected on Blockchain")
+    print("Verifying Proof")
+    if verify_proof_chain(None, reloaded[0], reloaded[1], proof_request_contract.getChallenge()):
+        print("Accept")
+    else:
+        print("Reject")
+    exit()
+
 
 
 
