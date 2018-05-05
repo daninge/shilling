@@ -39,15 +39,8 @@ git clone https://www.github.com/daninge98/shilling
 git submodule update --init --recursive
 git submodule foreach git pull origin master
 ```
-We will use a Python virtual environment for convenience. 
-Also, packages require Python 3 in order to be run. 
-If you haven't installed virtualenv yet, 
-```
-pip3 install virtualenv 
-virtualenv venv
-source venv/bin/activate
-```
-You can confirm using ```which python``` whether or not you are using a system Python installation or the one from the virtual environment. 
+ 
+Packages require Python 3 in order to be run. 
 
 To install the dependencies, run
 ```
@@ -55,6 +48,13 @@ brew tap ethereum/ethereum
 brew install solidity
 pip3 install -r requirements.txt
 ```
+
+If using a Mac, you can use our ```install.sh``` script to install the dependencies.
+```
+chmod +x install.sh
+./install.sh
+```
+
 Other than Python libraries, we also require Truffle Ganache, which can be downloaded [here](http://truffleframework.com/ganache/).
 
 ## Overview
