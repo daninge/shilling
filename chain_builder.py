@@ -22,6 +22,7 @@ def build_proof_chain(file_name, initial_challenge, chain_length, t=None, tp=5, 
     proofs = []
     chains = []
     chi = initial_challenge
+    print("n = "+str(n))
     for i in range(0, chain_length):
         challenge_block = chi % sia.get_num_blocks(file_name)
         p = sia.generate_proof(challenge_block, file_name)
@@ -34,16 +35,18 @@ def build_proof_chain(file_name, initial_challenge, chain_length, t=None, tp=5, 
         chi = seed_string
 
         G = compute_posw(chi, n=n)
-        gamma = opening_challenge(secure=False, s=420, t=tp)
+        gamma = opening_challenge(secure=False, s=420, n=n, t=tp)
         chain = compute_open(chi, G, gamma)
         chains += [(G.node[BinaryString(0, 0)]['label'], chain)]
         chi = int(G.node[BinaryString(0, 0)]['label'])
+    challenge_block = chi % sia.get_num_blocks(file_name)
+    proofs += [sia.generate_proof(challenge_block, file_name)]
     block_filter = w3.eth.filter('latest')
     return (proofs, chains)
 
 
-def verify_proof_chain(merkle_root, proofs, chains, initial_challenge, t=None, tp=5):
-    for i in range(0, len(proofs)):
+def verify_proof_chain(merkle_root, proofs, chains, initial_challenge, t=None, tp=5, n=10):
+    for i in range(0, len(proofs) - 1):
         if not sia.verify_proof(proofs[i][2], proofs[i][1], proofs[i][0]):
             print("sia failed")
             return False
@@ -56,7 +59,10 @@ def verify_proof_chain(merkle_root, proofs, chains, initial_challenge, t=None, t
             print("compute verify failed")
             return False
         chi = int(chains[i][0])
-    return True
+    if not sia.verify_proof(proofs[-1][2], proofs[-1][1], proofs[-1][0]):
+        return False
+    else:
+        return True
 
 
 
