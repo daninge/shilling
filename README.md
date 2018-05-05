@@ -8,21 +8,20 @@ First, start up Truffle Ganache, and run
 ```
 python3 setup_environment.py
 ```
-Our scheme is currently designed to be tested with .txt files. All of the file names should have be of the form xyz.txt, where xyz is a number. Files should be placed in the files/ directory.
+Our scheme is currently designed to be tested with .txt files. All of the file names should have be of the form ```xyz.txt```, where ```xyz``` is a number. Files should be placed in the files/ directory.
 
-Then, open three terminal windows. Run 
+In order to start a client node that wishes to store file ```xyz.txt``` 
 ```
 python3 client.py xyz
 ```
-in one of them, run
+To start up a storer node that accepts client requests to store files, run
 ```
 python3 storer.py
 ```
-in another, and run
+Finally, to start up a prover node that accepts storer requests for proofs and generates proof chains, run
 ```
 python3 prover.py
 ```
-in the last one.
 
 ## Installation
 We rely on a submodule for the implementation of 
