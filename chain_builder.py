@@ -28,20 +28,26 @@ def build_proof_chain(file_name, initial_challenge, chain_length, t=None, tp=5, 
         p = sia.generate_proof(challenge_block, file_name)
         proofs += [p]
         
+        if i!= 0:
+            gamma = opening_challenge(secure=False, s=str(p), n=n, t=tp)
+            chain = compute_open(chi, G, gamma)
+            chains += [(G.node[BinaryString(0, 0)]['label'], chain)]
+
         seed_string = ""
         #generate seed from all previous items in chain
         for j in range(0, len(proofs)):
             seed_string = seed_string + str(proofs[j])
         chi = seed_string
-
         G = compute_posw(chi, n=n)
-        gamma = opening_challenge(secure=False, s=420, n=n, t=tp)
-        chain = compute_open(chi, G, gamma)
-        chains += [(G.node[BinaryString(0, 0)]['label'], chain)]
         chi = int(G.node[BinaryString(0, 0)]['label'])
+
     challenge_block = chi % sia.get_num_blocks(file_name)
-    proofs += [sia.generate_proof(challenge_block, file_name)]
-    block_filter = w3.eth.filter('latest')
+    p = sia.generate_proof(challenge_block, file_name)
+    proofs += [p]
+
+    gamma = opening_challenge(secure=False, s=str(p), n=n, t=tp)
+    chain = compute_open(chi, G, gamma)
+    chains += [(G.node[BinaryString(0, 0)]['label'], chain)]
     return (proofs, chains)
 
 
@@ -54,7 +60,7 @@ def verify_proof_chain(merkle_root, proofs, chains, initial_challenge, t=None, t
         for j in range(0, i+1):
             seed_string = seed_string + str(proofs[j])
         chi = seed_string
-        gamma = opening_challenge(secure=False, s=420, t=tp)
+        gamma = opening_challenge(secure=False, s=str(proofs[i+1]), t=tp)
         if not compute_verify(chi, chains[i][0], gamma, chains[i][1]):
             print("compute verify failed")
             return False
