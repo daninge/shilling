@@ -8,9 +8,11 @@ First, start up Truffle Ganache, and run
 ```
 python3 setup_environment.py
 ```
+Our scheme is currently designed to be tested with .txt files. All of the file names should have be of the form xyz.txt, where xyz is a number. Files should be placed in the files/ directory.
+
 Then, open three terminal windows. Run 
 ```
-python3 client.py
+python3 client.py xyz
 ```
 in one of them, run
 ```
