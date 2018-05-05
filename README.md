@@ -63,7 +63,6 @@ Our system will consider the following four adversarial nodes:
 
 * __Client Nodes:__ These nodes have files that they wish to store. They will offer a reward for storing a file for a given time period. These nodes are not restricted by computational power.
 * __Storage Miners:__ These nodes have limited computational power. These nodes are purely responsible for storing data, and only require the computational ability to store the data and transfer it into and out of storage.
-* __Retrieval Miners:__ These nodes act as file servers for the network for a fee.
 * __Proof Miners:__ These nodes will perform proof-of-works for more computationally limited devices for a fee.
 
 <img src="docs/diagram1.png" width="400"> <img src="docs/diagram2.png" width="450">
